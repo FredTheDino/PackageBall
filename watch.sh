@@ -1,5 +1,2 @@
 #!/usr/bin/env bash
-inotifywait -r -m *.sy -e MOVE_SELF | 
-   while read file_path file_event file_name; do 
-       make build
-   done
+while inotifywait *.sy; do sleep 0.1; make build; done
