@@ -1,15 +1,22 @@
 mod Main
 
-type State = { x: Int }
+type State = { x: Int , p : Vec}
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool }
+
+def spy : a -> a := foreign -[[
+    function(x)
+        print(x)
+        return x
+    end
+]]-
+
+def init :  Int -> State : _ = { x: 2, p: { x:0, y:0 } }
 
 def update : Real -> Input -> State -> State : dt input state@{ x } =
   match input
   with { left: true } -> { x: x + 1 | state }
   with _ -> state
   end
-
-def init :  Int -> State : _ = { x: 2 }
 
 def draw
 : State -> Render Int

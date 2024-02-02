@@ -9,8 +9,8 @@ def add
 
 def mul
 : Real -> Vec -> Vec
-: s { x: xa, y: ya }
-= { x: s * xa, y: s * ya }
+: s { x, y }
+= { x: s * x, y: s * y }
 
 def dot
 : Vec -> Vec -> Real
