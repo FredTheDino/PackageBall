@@ -75,12 +75,12 @@ def map
   : (a -> b) -> Array a -> Array b
   : f xs = foldl (\a xs-> append (f a) xs) empty xs
 
-def filter
-  : (a -> Bool) -> Array a -> Array a
-  : f = foldl (\a xs -> match f a 
-                        with true -> append xs a
-                        with false -> xs
-                        end
-              ) empty
+-- def filter
+--   : (a -> Bool) -> Array a -> Array a
+--   : f = foldl (\a xs -> match f a 
+--                         with true -> append xs a
+--                         with false -> xs
+--                         end
+--               ) empty
 
 def flatten : Array (Array a) -> Array a := foldl ' join ' empty

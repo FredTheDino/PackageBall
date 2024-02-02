@@ -12,12 +12,13 @@ def spy : a -> a := foreign -[[
 
 def init :  Int -> State : _ = { x: 2, p: { x:0, y:0 } }
 
-def update : Real -> Input -> State -> State : dt input state@{ x } =
+def update : Real -> Input -> State -> State : dt input state@{ x, p } =
   match input
   with { left: true } -> { x: x + 1 | state }
+  with { right: true } -> { p: Vec.add p (Vec.vec 1.0 1.0) | state }
   with _ -> state
   end
 
 def draw
-: State -> Render Int
-: state = Render.pure 1
+: State -> Render Unit
+: { p } = Render.circle p 100.0

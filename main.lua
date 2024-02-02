@@ -18,5 +18,5 @@ function love.update(dt)
 end
 
 function love.draw()
-  game.draw(state)
+  game.draw(state)()
 end

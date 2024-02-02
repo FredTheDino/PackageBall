@@ -2,6 +2,10 @@ mod Vec
 
 type Vec = { x : Real, y : Real }
 
+def vec
+: Real -> Real -> Vec
+: x y = { x, y }
+
 def add
 : Vec -> Vec -> Vec
 : { x: xa, y: ya } { x: xb, y: yb }

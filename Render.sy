@@ -7,4 +7,33 @@ def pure : a -> Render a := foreign -[[
     function(x) return function() return x end end
   ]]-
 
+def and_then
+: (a -> Render b) -> Render a -> b
+:= foreign -[[
+  function(f)
+    return function(x)
+      return function()
+        local xx = x()
+        return f(xx)()
+      end
+    end
+  end
+]]-
+
+def map
+: (a -> b) -> Render a -> Render b
+: f = and_then (\x -> x # f # pure)
+
+def circle
+: Vec -> Real -> Render Unit
+:= foreign -[[
+  function(v) return function(r)
+    return function()
+      love.graphics.circle("fill", v.x, v.y, r)
+      return "UNIT"
+    end
+  end end
+
+
+]]-
 -- TODO: Render code goes here
