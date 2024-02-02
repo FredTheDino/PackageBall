@@ -7,6 +7,8 @@ function love.load()
 end
 
 function love.update(dt)
+  package.loaded["game"] = nil
+  game = require "game"
   local input =
     { left = love.keyboard.isDown("left") or love.keyboard.isDown("a")
     , right = love.keyboard.isDown("right") or love.keyboard.isDown("d")

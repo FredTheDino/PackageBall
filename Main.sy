@@ -10,13 +10,13 @@ def spy : a -> a := foreign -[[
     end
 ]]-
 
-def init :  Int -> State : _ = { x: 2, p: { x:0, y:0 } }
+def init : Int -> State : _ = { x: 2, p: { x:0, y:0 } }
 
 def update : Real -> Input -> State -> State : dt input state@{ x, p } =
   match input
   with { left: true } -> { x: x + 1 | state }
-  with { right: true } -> { p: Vec.add p (Vec.vec 1.0 1.0) | state }
-  with _ -> state
+  with { right: true } -> { p: Vec.add p (Vec.vec 1.0 0.0) | state }
+  with _ -> { x: x + 0 | state }
   end
 
 def draw
