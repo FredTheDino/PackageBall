@@ -1,18 +1,18 @@
 mod Vec
 
-type Vec = { x :: Real, y :: Real }
+type Vec = { x : Real, y : Real }
 
 def add
 : Vec -> Vec -> Vec
-: a b
-= { x: a.x + b.x, y: a.y + b.y }
+: { x: xa, y: ya } { x: xb, y: yb }
+= { x: xa + xb, y: ya + yb }
 
 def mul
 : Real -> Vec -> Vec
-: s a
-= { x: s * a.x, y: s * a.y }
+: s { x: xa, y: ya }
+= { x: s * xa, y: s * ya }
 
 def dot
 : Vec -> Vec -> Real
-: s a
-= (a.x * b.x) + (a.y * b.y)
+: { x: xa, y: ya } { x: xb, y: yb }
+= (xa * xb) + (ya * yb)
