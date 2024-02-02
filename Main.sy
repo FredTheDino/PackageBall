@@ -1,8 +1,13 @@
 mod Main
 
-type State = { x : Int }
+type State = { x: Int }
+type Input = { left: Bool, right: Bool, up: Bool, down: Bool }
 
-def update : Real -> State -> State : dt state = state
+def update : Real -> Input -> State -> State : dt input state@{ x } =
+  match input
+  with { left: true } -> { x: x + 1 | state }
+  with _ -> state
+  end
 
 def init :  Int -> State : _ = { x: 2 }
 
