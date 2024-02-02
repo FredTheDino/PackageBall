@@ -1,0 +1,7 @@
+mod Unit
+
+type Unit = foreign
+
+def unit : Unit := foreign -[[
+  "UNIT"
+]]-

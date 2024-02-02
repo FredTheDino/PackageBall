@@ -1,0 +1,43 @@
+mod Str
+
+def is_empty : Str -> Bool := foreign -[[ function(x) return x == "" end ]]-
+
+def gmatch
+  : Str -> Str -> Array Str
+  : = foreign -[[
+      function(p) return function(s)
+        local out = Sylt.Array.new({})
+        for m in string.gmatch(s, p) do
+          table.insert(out, m)
+        end
+        return out
+      end end
+  ]]-
+
+def to_int
+  : Str -> Maybe Int
+  := foreign -[[
+    function(x)
+      local p = tonumber(x)
+      if p == nil then
+        return Sylt.Enum.new("Nothing", nil)
+      else
+        return Sylt.Enum.new("Just", math.floor(p))
+      end
+    end
+  ]]-
+
+def to_real
+  : Str -> Maybe Real
+  := foreign -[[
+    function(x)
+      local p = tonumber(x)
+      if p == nil then
+        return Sylt.Enum.new("Nothing", nil)
+      else
+        return Sylt.Enum.new("Just", p)
+      end
+    end
+  ]]-
+
+

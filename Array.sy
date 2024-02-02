@@ -1,0 +1,86 @@
+mod Array
+
+type Array a = foreign
+
+def head
+  : Array a -> Maybe a
+  := foreign -[[
+    function(xs)
+      local x = xs[1]
+      if x == nil then
+        return Sylt.Enum.new("Nothing", nil)
+      else
+        return Sylt.Enum.new("Just", x)
+      end
+    end
+  ]]-
+
+def last
+  : Array a -> Maybe a
+  := foreign -[[
+    function(xs)
+      local x = xs[#xs]
+      if x == nil then
+        return Sylt.Enum.new("Nothing", nil)
+      else
+        return Sylt.Enum.new("Just", x)
+      end
+    end
+  ]]-
+
+
+def empty
+  : Array a
+  := foreign -[[ Sylt.Array.new({}) ]]-
+
+def singleton
+  : a -> Array a
+  := foreign -[[ function(a) return Sylt.Array.new({a}) end ]]-
+
+def append :  a -> Array a -> Array a
+  : x xs = join ' xs ' (singleton ' x)
+
+def join
+  : Array a -> Array a -> Array a
+  := foreign -[[
+  function(a) return function(b)
+    local c = Sylt.Array.new({})
+    for _, x in pairs(a) do
+      table.insert(c, x)
+    end
+    for _, x in pairs(b) do
+      table.insert(c, x)
+    end
+    return c
+  end end
+]]-
+
+def foldl
+  : (a -> b -> b) -> b -> Array a -> b
+  := foreign -[[
+  function(f) return function(s) return function(xs)
+    local b = s
+    for _, a in ipairs(xs) do
+      b = f(a)(b)
+    end
+    return b
+  end end end
+]]-
+
+def tostring
+  : a -> Str
+  := foreign -[[ tostring ]]-
+
+def map
+  : (a -> b) -> Array a -> Array b
+  : f xs = foldl (\a xs-> append (f a) xs) empty xs
+
+def filter
+  : (a -> Bool) -> Array a -> Array a
+  : f = foldl (\a xs -> match f a 
+                        with true -> append xs a
+                        with false -> xs
+                        end
+              ) empty
+
+def flatten : Array (Array a) -> Array a := foldl ' join ' empty
