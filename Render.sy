@@ -1,0 +1,10 @@
+mod Render
+
+type Render a = foreign
+
+
+def pure : a -> Render a := foreign -[[
+    function(x) return function() return x end end
+  ]]-
+
+-- TODO: Render code goes here

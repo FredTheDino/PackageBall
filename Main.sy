@@ -1,0 +1,11 @@
+mod Main
+
+type State = { x :: Int }
+
+def update : Real -> State -> State : dt state = state
+
+def init :: State = { x: 1 }
+
+def draw
+: State -> Render Int
+: state = Render.pure 1
