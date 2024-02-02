@@ -1,6 +1,6 @@
 mod Main
 
-type State = { x: Int , p : Vec}
+type State = { x: Int , p : Player}
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool }
 
 def spy : a -> a := foreign -[[
@@ -10,14 +10,14 @@ def spy : a -> a := foreign -[[
     end
 ]]-
 
-def init : Int -> State : _ = { x: 2, p: { x:0, y:0 } }
+def init : Int -> State : _ = { x: 2, p: { x:200, y:200 } }
+
+def iff : Bool -> a -> a -> a : b t f =
+  match b with true -> t with false -> f end
 
 def update : Real -> Input -> State -> State : dt input state@{ x, p } =
-  match input
-  with { left: true } -> { x: x + 1 | state }
-  with { right: true } -> { p: Vec.add p (Vec.vec 1.0 0.0) | state }
-  with _ -> { x: x + 0 | state }
-  end
+  { p: Player.update dt input p
+  | state }
 
 def draw
 : State -> Render Unit
