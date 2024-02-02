@@ -1,7 +1,7 @@
 .phony: build
 
 build:
-	./sylt *.sy -o operators.op --love -l main.lua
+	./sylt *.sy -o operators.op --love -l game.lua
 
 run: build
 	love .
