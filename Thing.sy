@@ -70,11 +70,20 @@ def update : Real -> Player -> Thing -> Thing : dt player thing =
   end
 
 def draw
-: Thing -> Render
-: thing 
-= Render.color (color thing)
-  *> Render.circle (pos thing) (rad thing)
-  *> Render.color Render.white
+: Array Image -> Thing -> Render
+: assets thing 
+= match thing
+  with Thing:Box { pos: { x, y }, vel: _ } ->
+     Render.color Render.white
+        *> Render.image { x, y, r: 0.0, s: 0.2 } (Array.index_unsafe assets Asset.box_open)
+  with Thing:Full { pos: { x, y } } ->
+     Render.color Render.white
+        *> Render.image { x, y, r: 0.0, s: 0.2 } (Array.index_unsafe assets Asset.box_closed)
+  with _ ->
+     Render.color (color thing)
+      *> Render.circle (pos thing) (rad thing)
+      *> Render.color Render.white
+  end
 
 def spawn_box
 : Unit -> Thing
