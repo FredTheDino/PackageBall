@@ -1,0 +1,4 @@
+mod Image
+
+def width : Image -> Real := foreign -[[ function(img) return img:getWidth() end ]]-
+def height : Image -> Real := foreign -[[ function(img) return img:getHeight() end ]]-

@@ -123,14 +123,15 @@ def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player t
 def draw
 : Array Image -> Thing -> Render
 : assets thing 
-= let
-     { x, y } = pos thing
-   in
-   Render.color Render.white
-      *> Render.image { x, y, r: 0.0, s: 0.2 } (Array.index_unsafe assets (asset thing))
-   -- Render.color (color thing)
-   --  *> Render.circle (pos thing) (rad thing)
-   --  *> Render.color Render.white
+= let { x, y } = pos thing
+  let img = Array.index_unsafe assets (asset thing)
+  let s = 2.0 * rad thing / Image.width img
+  in
+  Render.color Render.white
+     *> Render.image { x, y, r: 0.0, s } img
+  -- Render.color (color thing)
+  --  *> Render.circle (pos thing) (rad thing)
+  --  *> Render.color Render.white
 
 
 def min_speed ::= 7.0
