@@ -38,7 +38,10 @@ def singleton
   := foreign -[[ function(a) return Sylt.Array.new({a}) end ]]-
 
 def append :  a -> Array a -> Array a
-  : x xs = concat ' xs ' (singleton ' x)
+  : x xs = concat xs (singleton x)
+
+def prepend :  a -> Array a -> Array a
+  : x xs = concat (singleton x) xs
 
 def concat
   : Array a -> Array a -> Array a
