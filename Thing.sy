@@ -53,14 +53,14 @@ def is_full
 
 def is_inside_screen : Thing -> Bool : thing =
     let { x, y } = pos thing
-    let margin = rad thing
+    let margin = 2.0 * rad thing
     let height = margin + Render.height Unit.unit
     let width = margin + Render.width Unit.unit
     in
     ((`margin) <= x)
-    && (x <= width)
+    && (x <= width + margin)
     && ((`margin) <= y) 
-    && (y <= height)
+    && (y <= height + margin)
 
 
 def player_bounce
@@ -72,15 +72,15 @@ def player_bounce
   in Vec.mul ((Vec.dot normal (Player.vel player)) # Math.max 0.0 # Preamble._add 20.0) normal
 
 def hit_another_thing : Thing -> Thing -> Bool : a b =
-  ((Vec.dist (Thing.pos a) (Thing.pos b)) < Thing.rad b + Thing.rad a)
-  && (0.5 < (Vec.dist (Thing.pos a) (Thing.pos b)))
+  ((F.on Vec.dist pos a b) < F.on Preamble._add rad a b)
+  && (0.5 < (F.on Vec.dist pos a b))
 
 def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player things thing = 
   let r = rad thing
   let player_pos = Player.pos player
   in
   match is_inside_screen thing
-  with false -> (Maybe:Nothing)
+  with false -> let _ = Main.spy "ABC" in (Maybe:Nothing)
   with true -> 
   match thing
     with Thing:Shoe { pos, vel, img } -> 
@@ -133,8 +133,8 @@ def draw
    --  *> Render.color Render.white
 
 
-def min_speed ::= 70.0
-def ran_speed ::= 70.0
+def min_speed ::= 7.0
+def ran_speed ::= 7.0
 
 def random_speed :: _ = Math.random Unit.unit * ran_speed + min_speed
 

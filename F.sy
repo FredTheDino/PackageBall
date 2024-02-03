@@ -1,0 +1,5 @@
+mod F
+
+def on
+: (b -> b -> c) -> (a -> b) -> a -> a -> c
+: g f x y = g (f x) (f y)
