@@ -35,7 +35,16 @@ def circle
       return "UNIT"
     end
   end end
-
-
 ]]-
+
+def printf_foreign ::= foreign -[[
+    function(a, b, c, d)
+        return function()
+            love.graphics.printf(a, b, c, d)
+            return "UNIT"
+        end
+    end
+]]-
+
+def printf : Str -> Real -> Real -> Real -> Render Unit := Curry.fn4 printf_foreign
 -- TODO: Render code goes here
