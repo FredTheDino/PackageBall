@@ -6,15 +6,12 @@ def random : Unit -> Real := foreign -[[
     end
 ]]-
 
-def sqrt : Real -> Real := foreign -[[
-    function(a)
-        return love.math.sqrt(a)
-    end
-]]-
+def sqrt : Real -> Real := foreign -[[ function(a) return math.sqrt(a) end ]]-
 
 def sin : Real -> Real := foreign -[[ math.sin ]]-
 def cos : Real -> Real := foreign -[[ math.cos ]]-
 def tan : Real -> Real := foreign -[[ math.tan ]]-
+def pow : Real -> Real -> Real := foreign -[[ function(x) return function(y) return x ^ y end end ]]-
 def pi : Real := foreign -[[ math.pi ]]-
 def tau : Real := foreign -[[ math.pi * 2 ]]-
 def sq : Real -> Real : x = x * x

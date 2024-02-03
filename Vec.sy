@@ -26,13 +26,22 @@ def dot
 : { x: xa, y: ya } { x: xb, y: yb }
 = (xa * xb) + (ya * yb)
 
+def clamp
+: Real -> Vec -> Vec
+: x v
+= let l = len v in 
+  Bool.iff (l < x)
+    (v)
+    (Vec.mul (x / l) v)
+
+
 def len_sq
 : Vec -> Real
 : a = dot a a
 
 def len
 : Vec -> Real
-:= len_sq >> Math.sqrt
+: v = v # len_sq # Math.sqrt
 
 def normalize
 : Vec -> Vec
@@ -43,4 +52,3 @@ def normalize
   Bool.iff (l == 0.0)
     (vec 0.0 0.0)
     (a # Vec.mul (1.0 / l))
-

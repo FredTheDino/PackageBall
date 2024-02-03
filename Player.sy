@@ -1,11 +1,31 @@
 mod Player
 
-type Player = Vec
+type Player = { p: Vec, v: Vec }
+
+def radius : Real := 50.0
+
+def new : Player := { p: { x:200, y:200 }, v: { x: 0, y: 0 }}
 
 def input_to_vec : Input -> Vec : { left, right, up, down } =
   Vec.add
     (Vec.vec (Bool.iff left 1.0 0.0) (Bool.iff up 1.0 0.0) # Vec.mul (`1.0))
     (Vec.vec (Bool.iff right 1.0 0.0) (Bool.iff down 1.0 0.0))
 
-def update : Real -> Input -> Player -> Player : dt input p = 
-  input_to_vec input # Vec.mul (dt * 100.0) # Vec.add p
+def update : Real -> Input -> Player -> Player : dt input { p, v } = 
+  { p: v
+        # Vec.mul dt
+        # Vec.add p
+  , v: input_to_vec input
+        # Vec.mul (dt * 2000.0)
+        # Vec.add v
+        # Vec.clamp 1000.0
+        # Vec.mul (Math.pow 0.01 dt)
+  }
+
+def render
+: Player -> Render
+: { p } = 
+      Render.color Render.red
+      *> Render.circle p radius
+      *> Render.color Render.white
+
