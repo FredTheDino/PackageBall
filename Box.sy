@@ -5,7 +5,7 @@ type Box = { pos : Vec, dir : Vec }
 def update : Real -> Box -> Box : dt { pos, dir } = 
  { pos: dir # Vec.mul (dt * speed) # Vec.add pos, dir }
 
-def rad ::= 100.0
+def rad ::= 20.0
 
 def draw : Box -> Render : { pos } = Render.color Render.green *> Render.circle pos rad
 
