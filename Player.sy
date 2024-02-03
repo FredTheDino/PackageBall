@@ -2,7 +2,9 @@ mod Player
 
 type Player = { p: Vec, v: Vec }
 
-def radius : Real := 50.0
+def rad : Real := 50.0
+
+def pos : Player -> Vec : { p, v } = p
 
 def new : Player := { p: { x:200, y:200 }, v: { x: 0, y: 0 }}
 
@@ -26,6 +28,6 @@ def render
 : Player -> Render
 : { p } = 
       Render.color Render.red
-      *> Render.circle p radius
+      *> Render.circle p rad
       *> Render.color Render.white
 

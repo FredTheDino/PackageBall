@@ -20,9 +20,9 @@ def init : Int -> State : _ =
   , full_boxes: []
   }
 
+def spawn_rate ::= 0.01
+
 def update : Real -> Input -> State -> State : dt input { p, x, balls, score, boxes, assets, full_boxes } =
-  let new_ball = Spawner.outside_screen Unit.unit 
-  let new_box = Spawner.outside_screen Unit.unit 
   let full_boxes = full_boxes
       # Array.concat
         (balls
@@ -33,7 +33,6 @@ def update : Real -> Input -> State -> State : dt input { p, x, balls, score, bo
                   boxes
             )
         )
-      # spy
   in
   { p: Player.update dt input p
   , x
@@ -45,8 +44,8 @@ def update : Real -> Input -> State -> State : dt input { p, x, balls, score, bo
                         boxes
                       )
               )
-              # Array.map (Ball.update dt)
-              # Array.append new_ball
+              # Array.map (Ball.update dt p)
+              # Bool.iff (Math.random Unit.unit < spawn_rate) (Array.append $ Spawner.outside_screen Unit.unit ) (\x -> x)
   , score: score + 1
   , boxes: boxes
               # Array.filter (\b@{ pos, dir: _ } -> 
@@ -54,10 +53,10 @@ def update : Real -> Input -> State -> State : dt input { p, x, balls, score, bo
                   && !(Array.any
                         (\{ pos: xpos, dir: _ } -> (Vec.dist xpos pos) < Box.rad + Ball.rad)
                         balls
-                        )
+                      )
                   )
-              # Array.map (Box.update dt)
-              # Array.append new_box
+              # Array.map (Box.update dt p)
+              # Bool.iff (Math.random Unit.unit < spawn_rate) (Array.append $ Spawner.outside_screen Unit.unit ) (\x -> x)
   , assets
   , full_boxes
   }
@@ -70,10 +69,10 @@ def draw
   let r = 100.0
   in
   Render.empty
-   *> Render.color (Bool.iff (Circle.hit { p: xx, r: Player.radius } { p: pp, r }) Render.red Render.white)
+   *> Render.color (Bool.iff (Circle.hit { p: xx, r: Player.rad } { p: pp, r }) Render.red Render.white)
    *> Player.render p
-   *> Render.all (Render.image { x: 100.0, y: 100.0, r: 0.0, s: 1.0 }) assets
-   *> Render.circle pp r
+   -- *> Render.all (Render.image { x: 100.0, y: 100.0, r: 0.0, s: 1.0 }) assets
+   -- *> Render.circle pp r
    *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
    *> Render.all (Ball.draw_full) full_boxes
    *> Render.all (Ball.draw) balls

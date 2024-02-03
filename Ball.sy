@@ -2,8 +2,16 @@ mod Ball
 
 type Ball = { pos : Vec, dir : Vec }
 
-def update : Real -> Ball -> Ball : dt { pos, dir } = 
- { pos: dir # Vec.mul (dt * speed) # Vec.add pos, dir }
+def update : Real -> Player -> Box -> Box : dt player { pos, dir } = 
+  let player_pos = Player.pos player
+  in
+ { pos: dir # Vec.mul (dt * speed) # Vec.add pos
+ , dir: 
+      Bool.iff
+        (Circle.hit { p: player_pos, r: Player.rad } { p: pos, r: rad })
+        (Vec.sub pos player_pos # Vec.normalize)
+        (dir)
+ }
 
 def rad ::= 10.0
 

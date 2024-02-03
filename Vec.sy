@@ -49,7 +49,7 @@ def dist_sq
 
 def dist
 : Vec -> Vec -> Real
-: a b = Main.spy (dist_sq a b # Math.sqrt)
+: a b = dist_sq a b # Math.sqrt
 
 def normalize
 : Vec -> Vec
