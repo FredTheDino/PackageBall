@@ -1,0 +1,3 @@
+mod Math
+
+def random : Unit -> Real := foreign -[[ function(unit) return love.math.random() end ]]-

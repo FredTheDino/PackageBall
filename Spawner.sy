@@ -1,0 +1,7 @@
+mod Spawner
+
+def outsideScreen ::=
+    let
+        above = Math.random Unit.unit
+    in
+    1
