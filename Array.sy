@@ -130,3 +130,15 @@ def all : (a -> Bool) -> Array a -> Bool : f xs = !(any (\x -> !(f x)) xs)
 def index_unsafe : Array a -> Int -> a := foreign -[[
     function(a) return function(i) return a[i+1] end end
 ]]-
+
+def range
+  : Int -> Int -> Array Int
+  := foreign -[[
+  function(from) return function(to)
+    local a = Sylt.Array.new({})
+    for i=from,to do
+      table.insert(a, i)
+    end
+    return a
+  end end
+]]-

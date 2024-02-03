@@ -54,7 +54,14 @@ def draw
 
 def background : Array Image -> Render : assets =
   let img = Array.index_unsafe assets Asset.tile
+  let size = Image.width img
+  let needed_x = Real.floor (Render.width Unit.unit / size)
+  let needed_y = Real.floor (Render.height Unit.unit / size)
   in
-  Render.image { x: 0.0, y: 0.0, r: 0.0, s: 1.0 } img
-  *> Render.image { x: 100.0, y: 0.0, r: 0.0, s: 1.0 } img
-
+  Array.range 0 needed_x
+    # Render.all (\x ->
+      Array.range 0 needed_y
+        # Render.all (\y ->
+            Render.image { x: size * x + size / 2, y: size * y + size / 2, r: 0.0, s: 1.0 } img
+        )
+    )

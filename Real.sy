@@ -1,0 +1,4 @@
+mod Real
+
+def ceil : Real -> Int := foreign -[[ math.ceil ]]-
+def floor : Real -> Int := foreign -[[ math.floor ]]-
