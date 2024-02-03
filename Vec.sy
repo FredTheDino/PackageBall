@@ -11,6 +11,11 @@ def add
 : { x: xa, y: ya } { x: xb, y: yb }
 = { x: xa + xb, y: ya + yb }
 
+def sub
+: Vec -> Vec -> Vec
+: { x: xa, y: ya } { x: xb, y: yb }
+= { x: xa - xb, y: ya - yb }
+
 def mul
 : Real -> Vec -> Vec
 : s { x, y }
@@ -20,3 +25,11 @@ def dot
 : Vec -> Vec -> Real
 : { x: xa, y: ya } { x: xb, y: yb }
 = (xa * xb) + (ya * yb)
+
+def len_sq
+: Vec -> Real
+: a = dot a a
+
+def len
+: Vec -> Vec -> Real
+:= len_sq >> Math.sqrt

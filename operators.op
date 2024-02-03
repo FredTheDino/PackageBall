@@ -10,6 +10,8 @@ binr ' 6 Preamble._call
 binr # 7 Preamble._revCall
 binr *> 7 Render.and
 binr $ 8 Preamble._call
+binr >> 9 Curry.compose_flip
+binr << 9 Curry.compose
 
 binr == 8 Preamble._eq
 binr != 8 Preamble._neq

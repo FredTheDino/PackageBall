@@ -5,3 +5,9 @@ def random : Unit -> Real := foreign -[[
         return love.math.random()
     end
 ]]-
+
+def sqrt : Real -> Real := foreign -[[
+    function(a)
+        return love.math.sqrt(a)
+    end
+]]-
