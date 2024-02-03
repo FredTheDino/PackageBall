@@ -64,16 +64,31 @@ def is_inside_screen : Thing -> Bool : thing =
 
 
 def player_bounce
-: Player -> Vec -> Vec -> Vec
-: player p vel
+: Player -> Vec -> Real -> Vec -> Vec
+: player p r vel
 =
   let player_pos = Player.pos player
-  let normal = Vec.sub p player_pos # Vec.normalize
-  in Vec.mul ((Vec.dot normal (Player.vel player)) # Math.max 0.0 # Preamble._add 20.0) normal
+  in
+  Bool.iff
+    (Circle.hit { p: player_pos, r: Player.rad } { p, r })
+      (let normal = Vec.sub p player_pos # Vec.normalize
+       in Vec.mul (((Vec.dot normal (Player.vel player)) # Math.max 0.0 # Preamble._add 20.0) + 100.0 + Vec.len vel) normal
+      )
+      (vel)
 
 def hit_another_thing : Thing -> Thing -> Bool : a b =
   ((F.on Vec.dist pos a b) < F.on Preamble._add rad a b)
   && (0.5 < (F.on Vec.dist pos a b))
+
+def bounce
+: Thing -> Thing -> Vec -> Vec
+: other self vel = 
+  let n = F.on Vec.sub pos self other # Vec.normalize
+  in Bool.iff
+      ((Vec.dot n vel) < 0.0)
+      (Vec.mul (`2.0) vel)
+      (vel)
+
 
 def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player things thing = 
   let r = rad thing
@@ -85,16 +100,14 @@ def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player t
   match thing
     with Thing:Shoe { pos, vel, img } -> 
          match Array.find (hit_another_thing thing) things
-          with Maybe:Just _ -> (Maybe:Nothing)
+          with Maybe:Just (Thing:Box _) -> (Maybe:Nothing)
+          with Maybe:Just t@(Thing:Shoe _) -> Maybe:Just (Thing:Shoe { pos, vel: vel # bounce t thing # player_bounce player pos r, img })
+          with Maybe:Just t@(Thing:Full _) -> Maybe:Just (Thing:Shoe { pos, vel: vel # bounce t thing # player_bounce player pos r, img })
           with Maybe:Nothing -> 
              Maybe:Just
               (Thing:Shoe
                { pos: vel # Vec.mul dt # Vec.add pos
-               , vel: 
-                    Bool.iff
-                      (Circle.hit { p: player_pos, r: Player.rad } { p: pos, r })
-                      (player_bounce player pos vel)
-                      (vel)
+               , vel: player_bounce player pos r vel
                , img
                }
               )
@@ -102,16 +115,14 @@ def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player t
     with Thing:Box { pos, vel } -> 
        match Array.find (hit_another_thing thing) things
        with Maybe:Just (Thing:Shoe _) -> Maybe:Just (Thing:Full { pos })
+       with Maybe:Just t@(Thing:Box _) -> Maybe:Just (Thing:Box { pos, vel: vel # bounce t thing # player_bounce player pos r })
+       with Maybe:Just t@(Thing:Full _) -> Maybe:Just (Thing:Box { pos, vel: vel # bounce t thing # player_bounce player pos r })
        with Maybe:Just _ -> (Maybe:Nothing)
        with Maybe:Nothing -> 
            Maybe:Just
            (Thing:Box
              { pos: vel # Vec.mul dt # Vec.add pos
-             , vel: 
-                  Bool.iff
-                    (Circle.hit { p: player_pos, r: Player.rad } { p: pos, r })
-                    (player_bounce player pos vel)
-                    (vel)
+             , vel: player_bounce player pos r vel
              }
             )
         end
@@ -134,7 +145,7 @@ def draw
   --  *> Render.color Render.white
 
 
-def min_speed ::= 30.0
+def min_speed ::= 50.0
 def ran_speed ::= 80.0
 
 def random_speed :: _ = Math.random Unit.unit * ran_speed + min_speed
