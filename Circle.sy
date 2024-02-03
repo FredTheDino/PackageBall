@@ -5,4 +5,4 @@ type Circle = { p: Vec, r: Real }
 def hit
 : Circle -> Circle -> Bool 
 : { p: ap, r: ar} { p: bp, r: br }
-= true
+= Vec.sub ap bp # Vec.len_sq < Math.sq (ar + br)

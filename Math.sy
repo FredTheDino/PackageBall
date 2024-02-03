@@ -17,3 +17,4 @@ def cos : Real -> Real := foreign -[[ math.cos ]]-
 def tan : Real -> Real := foreign -[[ math.tan ]]-
 def pi : Real := foreign -[[ math.pi ]]-
 def tau : Real := foreign -[[ math.pi * 2 ]]-
+def sq : Real -> Real : x = x * x

@@ -39,10 +39,15 @@ def printf
 : Str -> Real -> Real -> Real -> Render
 := Curry.fn4 printf_foreign
 
-def color ::= foreign -[[
+type Color = { r: Real, g: Real, b: Real, a: Real }
+
+def color : Color -> Render := foreign -[[
     function(c)
         return function()
-          love.graphics.printf(c.r, c.g, c.b, c.a)
+          love.graphics.setColor(c.r, c.g, c.b, c.a)
         end
     end
 ]]-
+
+def white : Color := { r: 1.0, g: 1.0, b: 1.0, a: 1.0 }
+def red : Color := { r: 1.0, g: 0.0, b: 0.0, a: 1.0 }
