@@ -20,9 +20,9 @@ def init : Int -> State : _ =
 
 def spawn_rate ::= 0.01
 
-def xx : Thing -> Thing -> Bool : x b =
-  ((Vec.dist (Thing.pos x) (Thing.pos b)) < Thing.rad b + Thing.rad x)
-  && !(Vec.eq (Thing.pos x) (Thing.pos b))
+def xx : Thing -> Thing -> Bool : a b =
+  ((Vec.dist (Thing.pos a) (Thing.pos b)) < Thing.rad b + Thing.rad a)
+  && (0.5 < (Vec.dist (Thing.pos a) (Thing.pos b)))
 
 def update : Real -> Input -> State -> State : dt input { p, x, score, assets, things } =
   let things = things
