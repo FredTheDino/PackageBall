@@ -16,7 +16,7 @@ def init : Int -> State : _ =
   , score: 0
   , balls: []
   , boxes: []
-  , assets: [ Asset.image "assets/shoe1.png" ]
+  , assets: Asset.load_assets Unit.unit
   , full_boxes: []
   }
 

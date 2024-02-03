@@ -2,8 +2,22 @@ mod Asset
 
 type Image = foreign
 
+def shoe1 ::= 1
+def shoe2 ::= 2
+def shoe3 ::= 3
+def box_open ::= 4
+def box_closed ::= 4
+
 def image : Str -> Image := foreign -[[
   function(x)
     return love.graphics.newImage(x)
   end
 ]]-
+
+def load_assets : Unit -> Array Image : _ =
+    [ Asset.image "assets/shoe1.png"
+    , Asset.image "assets/shoe2.png"
+    , Asset.image "assets/shoe3.png"
+    , Asset.image "assets/box_open.png"
+    , Asset.image "assets/box_closed.png"
+    ]
