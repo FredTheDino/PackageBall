@@ -1,0 +1,9 @@
+mod Asset
+
+type Image = foreign
+
+def image : Str -> Image := foreign -[[
+  function(x)
+    return love.graphics.newImage(x)
+  end
+]]-
