@@ -12,9 +12,9 @@ def spy : a -> a := foreign -[[
 
 def init : Int -> State : _ = { x: 2, p: { x:200, y:200 } }
 
-def update : Real -> Input -> State -> State : dt input state@{ p } =
+def update : Real -> Input -> State -> State : dt input { p, x } =
   { p: Player.update dt input p
-  | state }
+  , x }
 
 def draw
 : State -> Render Unit
