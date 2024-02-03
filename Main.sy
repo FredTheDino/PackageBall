@@ -20,8 +20,6 @@ def init : Int -> State : _ =
   , full_boxes: []
   }
 
-def box_rad ::= Math.sq 500.0
-
 def update : Real -> Input -> State -> State : dt input { p, x, balls, score, boxes, assets, full_boxes } =
   let new_ball = Spawner.outside_screen Unit.unit 
   let new_box = Spawner.outside_screen Unit.unit 
@@ -31,7 +29,7 @@ def update : Real -> Input -> State -> State : dt input { p, x, balls, score, bo
           # Array.filter
             (\{ pos: bpos, dir: _ } ->
                 Array.any
-                  (\{ pos: xpos, dir: _ } -> (Vec.dist_sq xpos bpos) < box_rad)
+                  (\{ pos: xpos, dir: _ } -> (Vec.dist xpos bpos) < Box.rad + Ball.rad)
                   boxes
             )
         )
@@ -43,7 +41,7 @@ def update : Real -> Input -> State -> State : dt input { p, x, balls, score, bo
               # Array.filter (\b@{pos, dir: _ } ->
                   Ball.is_inside_screen b
                   && !(Array.any
-                        (\{ pos: xpos, dir: _ } -> (Vec.dist_sq xpos pos) < box_rad)
+                        (\{ pos: xpos, dir: _ } -> (Vec.dist xpos pos) < Box.rad + Ball.rad)
                         boxes
                       )
               )
@@ -54,7 +52,7 @@ def update : Real -> Input -> State -> State : dt input { p, x, balls, score, bo
               # Array.filter (\b@{ pos, dir: _ } -> 
                   Ball.is_inside_screen b
                   && !(Array.any
-                        (\{ pos: xpos, dir: _ } -> (Vec.dist_sq xpos pos) < box_rad)
+                        (\{ pos: xpos, dir: _ } -> (Vec.dist xpos pos) < Box.rad + Ball.rad)
                         balls
                         )
                   )

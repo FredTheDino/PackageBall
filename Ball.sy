@@ -5,8 +5,10 @@ type Ball = { pos : Vec, dir : Vec }
 def update : Real -> Ball -> Ball : dt { pos, dir } = 
  { pos: dir # Vec.mul (dt * speed) # Vec.add pos, dir }
 
-def draw : Ball -> Render : { pos } = Render.color Render.blue *> Render.circle pos 5.0
-def draw_full : Box -> Render : { pos } = Render.color Render.white *> Render.circle pos 5.0
+def rad ::= 10.0
+
+def draw : Ball -> Render : { pos } = Render.color Render.blue *> Render.circle pos rad
+def draw_full : Box -> Render : { pos } = Render.color Render.white *> Render.circle pos rad
 
 def speed : Real := 100.0
 
