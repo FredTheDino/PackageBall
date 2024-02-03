@@ -19,7 +19,7 @@ def init : Int -> State : _ =
   , assets: Asset.load_assets Unit.unit
   }
 
-def spawn_rate ::= 0.01
+def spawn_rate ::= 0.001
 
 
 def update : Real -> Input -> State -> State : dt input { p, score, assets, things } =
@@ -62,8 +62,8 @@ def draw
    *> Render.color Render.white
    *> background assets
    *> Player.render p
-   *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
    *> Render.all (Thing.draw assets) things
+   *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
 
 def background : Array Image -> Render : assets =
   let img = Array.index_unsafe assets Asset.tile
