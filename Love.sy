@@ -1,3 +1,8 @@
 mod Love
 
-def quit : Int -> a := foreign -[[ love.event.quit ]]-
+def quit : Int -> a -> a := foreign -[[
+    function(exit_code) return function(a)
+        love.event.quit(exit_code)
+        return a
+    end end
+]]-

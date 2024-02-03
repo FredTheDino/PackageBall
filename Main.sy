@@ -4,6 +4,7 @@ type State = { p : Player, things : Array Thing, score : Int, assets: Array Imag
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool, restart: Bool, exit: Bool }
 
 def get_restart : Input -> Bool : { restart } = restart
+def get_exit : Input -> Bool : { exit } = exit
 
 def spy : a -> a := foreign -[[
     function(x)
@@ -22,16 +23,18 @@ def init : Int -> State : _ =
 def spawn_rate ::= 0.001
 
 
-def update : Real -> Input -> State -> State : dt input { p, score, assets, things } =
+def update : Real -> Input -> State -> State : dt input state@{ p, score, assets, things } =
   let updated_things = things # Array.map (Thing.update dt p things)
   let should_spawn_box =
       !(things
         # Array.any (\t -> match t with Thing:Box {pos: _, vel} -> 0.1 < Vec.len_sq vel with _ -> false end))
   in
-  match get_restart input
-  with true ->
+  match { r: get_restart input, e: get_exit input } 
+  with { r: true, e: _ } ->
     init 0 
-  with false ->
+  with { r: _, e: true } ->
+    Love.quit 0 state
+  with _ ->
     { p: Player.update dt input p
     , things: updated_things
                 # Array.filter_map (\x -> x)
