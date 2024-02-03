@@ -25,9 +25,9 @@ def draw
   let pp = { x: 100.0, y: 200.0 }
   let r = 100.0
   in
-      Render.empty
-       *> Render.color (Bool.iff (Circle.hit { p, r } { p: pp, r }) Render.red Render.white)
-       *> Render.circle p r
-       *> Render.circle pp r
-       *> (Render.printf "Hello world" 0.0 0.0 300.0)
-       *> Array.foldl (\{ pos } acc -> acc *> Render.circle pos 5.0) Render.empty balls
+  Render.empty
+   *> Render.color (Bool.iff (Circle.hit { p, r } { p: pp, r }) Render.red Render.white)
+   *> Render.circle p r
+   *> Render.circle pp r
+   *> Render.printf "Hello world" 0.0 0.0 300.0
+   *> Array.foldl (\{ pos } acc -> acc *> Render.circle pos 5.0) Render.empty balls
