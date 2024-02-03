@@ -90,6 +90,12 @@ def draw
    --  *> Render.circle (pos thing) (rad thing)
    --  *> Render.color Render.white
 
+
+def min_speed ::= 1.0
+def ran_speed ::= 1.0
+
+def random_speed :: _ = Math.random Unit.unit * ran_speed + min_speed
+
 def spawn_box
 : Unit -> Thing
 : _
@@ -105,7 +111,7 @@ def spawn_box
             { x, y: yoffset }
             { x: xoffset, y }
     let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
-    let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (Math.random Unit.unit * 100.0 + 100.0)
+    let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (random_speed Unit.unit)
     in
     Thing:Box (Bool.iff (Math.random Unit.unit < 0.5)
         { pos: { x: x, y: yoffset }, vel }
@@ -127,7 +133,7 @@ def spawn_shoe
             { x, y: yoffset }
             { x: xoffset, y }
     let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
-    let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (Math.random Unit.unit * 100.0 + 100.0)
+    let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (random_speed Unit.unit)
     in
     Thing:Shoe ( Bool.iff (Math.random Unit.unit < 0.5)
         { pos: { x: x, y: yoffset }, vel }
