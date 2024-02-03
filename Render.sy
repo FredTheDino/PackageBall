@@ -2,12 +2,7 @@ mod Render
 
 type Render = foreign
 
-
-def pure : a -> Render := foreign -[[
-    function(x) return function() return x end end
-  ]]-
-
-def empty : Render := foreign -[[ function() return "UNIT" end ]]-
+def empty : Render := foreign -[[ function() end ]]-
 
 def and
 : Render -> Render -> Render
@@ -28,7 +23,6 @@ def circle
   function(v) return function(r)
     return function()
       love.graphics.circle("fill", v.x, v.y, r)
-      return "UNIT"
     end
   end end
 ]]-
@@ -37,7 +31,6 @@ def printf_foreign ::= foreign -[[
     function(a, b, c, d)
         return function()
             love.graphics.printf(a, b, c, d)
-            return "UNIT"
         end
     end
 ]]-
