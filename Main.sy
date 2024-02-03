@@ -1,7 +1,9 @@
 mod Main
 
-type State = { x: Int, p : Player, things : Array Thing, score : Int, assets: Array Image }
-type Input = { left: Bool, right: Bool, up: Bool, down: Bool }
+type State = { p : Player, things : Array Thing, score : Int, assets: Array Image }
+type Input = { left: Bool, right: Bool, up: Bool, down: Bool, restart: Bool, exit: Bool }
+
+def get_restart : Input -> Bool : { restart } = restart
 
 def spy : a -> a := foreign -[[
     function(x)
@@ -11,8 +13,7 @@ def spy : a -> a := foreign -[[
 ]]-
 
 def init : Int -> State : _ =
-  { x: 2
-  , p: Player.new
+  { p: Player.new
   , score: 0
   , things: []
   , assets: Asset.load_assets Unit.unit
@@ -21,31 +22,34 @@ def init : Int -> State : _ =
 def spawn_rate ::= 0.01
 
 
-def update : Real -> Input -> State -> State : dt input { p, x, score, assets, things } =
-  let
-    updated_things = things # Array.map (Thing.update dt p things)
+def update : Real -> Input -> State -> State : dt input { p, score, assets, things } =
+  let updated_things = things # Array.map (Thing.update dt p things)
   in
-  { p: Player.update dt input p
-  , x
-  , things: updated_things
-              # Array.filter_map (\x -> x)
-              # Bool.iff
-                (Math.random Unit.unit < spawn_rate)
-                (Array.prepend $ Thing.spawn_box Unit.unit)
-                (\x -> x)
-              # Bool.iff
-                (Math.random Unit.unit < spawn_rate)
-                (Array.prepend $ Thing.spawn_shoe Unit.unit)
-                (\x -> x)
-  , score: Array.range 0 (Array.size things - 1)
-              # Array.foldl (\i acc ->
-                  match { a: Array.index_unsafe things i, b: Array.index_unsafe updated_things i }
-                  with { a: Thing:Box _, b: Maybe:Just (Thing:Full _) } -> acc + 100
-                  with _ -> acc
-                  end
-              ) score
-  , assets
-  }
+  match get_restart input
+  with true ->
+    init 0 
+  with false ->
+    { p: Player.update dt input p
+    , things: updated_things
+                # Array.filter_map (\x -> x)
+                # Bool.iff
+                  (Math.random Unit.unit < spawn_rate)
+                  (Array.prepend $ Thing.spawn_box Unit.unit)
+                  (\x -> x)
+                # Bool.iff
+                  (Math.random Unit.unit < spawn_rate)
+                  (Array.prepend $ Thing.spawn_shoe Unit.unit)
+                  (\x -> x)
+    , score: Array.range 0 (Array.size things - 1)
+                # Array.foldl (\i acc ->
+                    match { a: Array.index_unsafe things i, b: Array.index_unsafe updated_things i }
+                    with { a: Thing:Box _, b: Maybe:Just (Thing:Full _) } -> acc + 100
+                    with _ -> acc
+                    end
+                ) score
+    , assets
+    }
+  end
 
 
 def draw

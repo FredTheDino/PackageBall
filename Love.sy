@@ -1,0 +1,3 @@
+mod Love
+
+def quit : Int -> a := foreign -[[ love.event.quit ]]-
