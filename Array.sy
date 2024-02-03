@@ -97,4 +97,4 @@ def filter
 
 def flatten : Array (Array a) -> Array a := foldl ' concat ' empty
 
-def any : (a -> Bool) -> Array a -> Bool : f xs = foldl (\x acc -> f x && acc) true xs
+def any : (a -> Bool) -> Array a -> Bool : f xs = foldl (\x acc -> f x || acc) false xs
