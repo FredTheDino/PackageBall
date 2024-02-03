@@ -47,7 +47,14 @@ def draw
   in
   Render.empty
    *> Render.color Render.white
-   *> Render.image { x: 0.0, y: 0.0, r: 0.0, s: 10.0 } (Array.index_unsafe assets Asset.tile)
+   *> background assets
    *> Player.render p
    *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
    *> Render.all (Thing.draw assets) things
+
+def background : Array Image -> Render : assets =
+  let img = Array.index_unsafe assets Asset.tile
+  in
+  Render.image { x: 0.0, y: 0.0, r: 0.0, s: 1.0 } img
+  *> Render.image { x: 100.0, y: 0.0, r: 0.0, s: 1.0 } img
+
