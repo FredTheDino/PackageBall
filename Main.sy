@@ -30,7 +30,7 @@ def update : Real -> Input -> State -> State : dt input { p, x, score, assets, t
                 in
                 Thing.is_inside_screen b
                 && !(Array.any
-                      (\x -> ((Vec.dist (Thing.pos x) pos) < Box.rad + Ball.rad) && (x != b))
+                      (\x -> ((Vec.dist (Thing.pos x) pos) < Thing.rad b + Thing.rad x) && (x != b))
                       things
                     )
             )
@@ -44,7 +44,7 @@ def update : Real -> Input -> State -> State : dt input { p, x, score, assets, t
                   in
                   Thing.is_inside_screen b
                   && !(Array.any
-                        (\x -> ((Vec.dist (Thing.pos x) pos) < Box.rad + Ball.rad) && (x != b))
+                        (\x -> ((Vec.dist (Thing.pos x) pos) < Thing.rad b + Thing.rad x) && (x != b))
                         things
                       )
               )
