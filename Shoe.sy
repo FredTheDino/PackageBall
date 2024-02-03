@@ -1,0 +1,8 @@
+mod Shoe
+
+type Shoe = { pos : Vec, dir : Vec }
+
+def update : Real -> Shoe -> Shoe : dt { pos, dir } = 
+ { pos: dir # Vec.mul (dt * speed) # Vec.add pos, dir }
+
+def speed : Real := 100.0

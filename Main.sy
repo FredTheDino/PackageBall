@@ -31,4 +31,4 @@ def draw
    *> Player.render p
    *> Render.circle pp r
    *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
-   *> Array.foldl (\{ pos } acc -> acc *> Render.circle pos 5.0) Render.empty balls
+   *> Array.foldl (\ball acc -> acc *> Ball.draw ball) Render.empty balls
