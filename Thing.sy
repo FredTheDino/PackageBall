@@ -124,8 +124,8 @@ def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player t
     with Thing:Box { pos, vel } -> 
        match Array.find (hit_another_thing thing) things
        with Maybe:Just (Thing:Shoe _) -> Maybe:Just (Thing:Full { pos })
-       with Maybe:Just t@(Thing:Box _) -> Maybe:Just (Thing:Box { pos, vel: vel # bounce t thing # player_bounce player pos r })
-       with Maybe:Just t@(Thing:Full _) -> Maybe:Just (Thing:Box { pos, vel: vel # bounce t thing # player_bounce player pos r })
+       with Maybe:Just t@(Thing:Box _) -> Maybe:Just (Thing:Box { pos, vel: Vec.vec 0.0 0.0 })
+       with Maybe:Just t@(Thing:Full _) -> Maybe:Just (Thing:Box { pos, vel: Vec.vec 0.0 0.0 })
        with Maybe:Just _ -> (Maybe:Nothing)
        with Maybe:Nothing -> 
            Maybe:Just
