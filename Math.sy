@@ -24,6 +24,9 @@ def min
 : a b
 = Bool.iff (a < b) a b
 
+def clamp
+ : Real -> Real -> Real -> Real
+ : lo hi x = max lo (min hi x)
 
 def sin : Real -> Real := foreign -[[ math.sin ]]-
 def cos : Real -> Real := foreign -[[ math.cos ]]-

@@ -25,6 +25,26 @@ def update : Real -> Input -> Player -> Player : dt input { p, v } =
         # Vec.clamp 1000.0
         # Vec.mul (Math.pow 0.01 dt)
   }
+  # clamp_inside
+
+def margin ::= rad * 1.5
+
+def clamp_inside
+  : Player -> Player
+  : { p: { x, y }, v: { x: vx, y: vy } } = 
+  let hix = (Render.width Unit.unit - margin)
+  let hiy = (Render.height Unit.unit - margin)
+  let lox = margin
+  let loy = margin
+  in
+  { p: { x: Math.clamp lox hix x
+       , y: Math.clamp loy hiy y }
+  , v: { x: vx * Bool.to_real (((lox < x) && (vx < 0.0))
+                               || ((0.0 < vx) && (x < hix)))
+       , y: vy * Bool.to_real (((loy < y) && (vy < 0.0))
+                               || ((0.0 < vy) && (y < hiy)))
+       }
+  }
 
 def render
 : Player -> Render
