@@ -22,10 +22,13 @@ def spawn_rate ::= 0.01
 
 
 def update : Real -> Input -> State -> State : dt input { p, x, score, assets, things } =
+  let
+    updated_things = things # Array.map (Thing.update dt p things)
+  in
   { p: Player.update dt input p
   , x
-  , things: things
-              # Array.filter_map (Thing.update dt p things)
+  , things: updated_things
+              # Array.filter_map (\x -> x)
               # Bool.iff
                 (Math.random Unit.unit < spawn_rate)
                 (Array.prepend $ Thing.spawn_box Unit.unit)
@@ -34,7 +37,13 @@ def update : Real -> Input -> State -> State : dt input { p, x, score, assets, t
                 (Math.random Unit.unit < spawn_rate)
                 (Array.prepend $ Thing.spawn_shoe Unit.unit)
                 (\x -> x)
-  , score: score + 1
+  , score: Array.range 0 (Array.size things - 1)
+              # Array.foldl (\i acc ->
+                  match { a: Array.index_unsafe things i, b: Array.index_unsafe updated_things i }
+                  with { a: Thing:Box _, b: Maybe:Just (Thing:Full _) } -> acc + 100
+                  with _ -> acc
+                  end
+              ) score
   , assets
   }
 
