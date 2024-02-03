@@ -21,8 +21,7 @@ def update : Real -> Input -> State -> State : dt input { p, x, balls } =
 
 def draw
 : State -> Render
-: { p } =
-    let v = Spawner.outsideScreen Unit.unit 
-    in Render.circle p (Math.random Unit.unit * 100.0)
+: { p, balls } =
+    Render.circle p (Math.random Unit.unit * 100.0)
        *> (Render.printf "Hello world" 0.0 0.0 300.0)
-       *> Render.circle v 5.0
+       *> Array.foldl (\v acc -> acc *> Render.circle v 5.0) Render.empty balls

@@ -7,6 +7,8 @@ def pure : a -> Render := foreign -[[
     function(x) return function() return x end end
   ]]-
 
+def empty : Render := foreign -[[ function() return "UNIT" end ]]-
+
 def and
 : Render -> Render -> Render
 := foreign -[[
