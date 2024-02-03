@@ -60,6 +60,8 @@ def draw
   let r = 100.0
   in
   Render.empty
+   *> Render.color Render.white
+   *> Render.image { x: 0.0, y: 0.0, r: 0.0, s: 10.0 } (Array.index_unsafe assets Asset.tile)
    *> Render.color (Bool.iff (Circle.hit { p: xx, r: Player.rad } { p: pp, r }) Render.red Render.white)
    *> Player.render p
    -- *> Render.all (Render.image { x: 100.0, y: 100.0, r: 0.0, s: 1.0 }) assets

@@ -10,8 +10,8 @@ def and
   function(f)
     return function(x)
       return function()
-        x()
         f()
+        x()
       end
     end
   end

@@ -27,7 +27,7 @@ def update : Real -> Input -> Player -> Player : dt input { p, v } =
 def render
 : Player -> Render
 : { p } = 
-      Render.color Render.red
+      Render.empty
       *> Render.circle p rad
       *> Render.color Render.white
 
