@@ -7,8 +7,11 @@ def outsideScreen : Unit -> Ball : _ =
     let xoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 width
     let x = Math.random Unit.unit * width + xoffset
     let y = Math.random Unit.unit * height + yoffset
-    let dir = { x: Math.cos (Math.random Unit.unit * Math.tau), y: Math.sin (Math.random Unit.unit * Math.tau) }
+    let pos = 
+        Bool.iff (Math.random Unit.unit < 0.5)
+            { x, y: yoffset }
+            { x: xoffset, y }
+    let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
+    let dir = Vec.normalize (Vec.sub dirt pos)
     in
-    Bool.iff (Math.random Unit.unit < 0.5)
-        { pos: { x: x, y: yoffset }, dir }
-        { pos: { x: xoffset, y }, dir }
+    { pos, dir }
