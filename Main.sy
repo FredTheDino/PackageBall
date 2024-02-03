@@ -18,5 +18,5 @@ def update : Real -> Input -> State -> State : dt input { p, x } =
 
 def draw
 : State -> Render Unit
-: { p } = let {x, y} = Spawner.outsideScreen Unit.unit 
-    in Render.circle p (Math.random Unit.unit * 100.0) >>= (\_ -> Graphics.printf "Hello world" x y 300.0)
+: { p } = let v = Spawner.outsideScreen Unit.unit 
+    in Render.circle p (Math.random Unit.unit * 100.0) >>= (\_ -> Graphics.printf "Hello world" 0.0 0.0 300.0) >>= (\_ -> Render.circle v 50.0)
