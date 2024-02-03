@@ -60,3 +60,8 @@ def normalize
   Bool.iff (l == 0.0)
     (vec 0.0 0.0)
     (a # Vec.mul (1.0 / l))
+
+def eq
+: Vec -> Vec -> Bool
+: { x: ax, y: ay } { x: bx, y: by }
+= ax == bx && ay == by
