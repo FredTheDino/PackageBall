@@ -1,6 +1,6 @@
 mod Main
 
-type State = { x: Int , p : Player, balls : Array Ball }
+type State = { x: Int , p : Player, balls : Array Ball, score : Int }
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool }
 
 def spy : a -> a := foreign -[[
@@ -10,18 +10,19 @@ def spy : a -> a := foreign -[[
     end
 ]]-
 
-def init : Int -> State : _ = { x: 2, p: { x:200, y:200 }, balls: [] }
+def init : Int -> State : _ = { x: 2, p: { x:200, y:200 }, balls: [], score: 0 }
 
-def update : Real -> Input -> State -> State : dt input { p, x, balls } =
+def update : Real -> Input -> State -> State : dt input { p, x, balls, score } =
   let newBall = Spawner.outsideScreen Unit.unit 
   in
   { p: Player.update dt input p
   , x
-  , balls: balls # Array.map (Ball.update dt) # Array.append newBall }
+  , balls: balls # Array.map (Ball.update dt) # Array.append newBall
+  , score: score + 1 }
 
 def draw
 : State -> Render
-: { p, balls } =
+: { p, balls, score } =
   let pp = { x: 100.0, y: 200.0 }
   let r = 100.0
   in
@@ -29,5 +30,5 @@ def draw
    *> Render.color (Bool.iff (Circle.hit { p, r } { p: pp, r }) Render.red Render.white)
    *> Render.circle p r
    *> Render.circle pp r
-   *> Render.printf "Hello world" 0.0 0.0 300.0
+   *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
    *> Array.foldl (\{ pos } acc -> acc *> Render.circle pos 5.0) Render.empty balls

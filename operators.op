@@ -1,6 +1,7 @@
 unary ` Preamble._neg
 unary ! Preamble._not
 
+binr ++ 4 Preamble.concat 
 binr + 4 Preamble._add 
 binr - 4 Preamble._sub
 binl * 3 Preamble._mul 
