@@ -20,34 +20,20 @@ def init : Int -> State : _ =
 
 def spawn_rate ::= 0.01
 
-def xx : Thing -> Thing -> Bool : a b =
-  ((Vec.dist (Thing.pos a) (Thing.pos b)) < Thing.rad b + Thing.rad a)
-  && (0.5 < (Vec.dist (Thing.pos a) (Thing.pos b)))
 
 def update : Real -> Input -> State -> State : dt input { p, x, score, assets, things } =
-  let things = things
-      # Array.concat
-        (things
-          # Array.filter
-            (\b ->
-                let pos = Thing.pos b
-                in
-                Array.any (xx b) things
-            )
-        )
-  in
   { p: Player.update dt input p
   , x
   , things: things
-              # Array.filter (\b ->
-                  let pos = Thing.pos b
-                  in
-                  true -- Thing.is_inside_screen b
-                  && !(Array.any (xx b) things)
-              )
-              # Array.map (Thing.update dt p)
-              # Bool.iff (Math.random Unit.unit < spawn_rate) (Array.append $ Thing.spawn_box Unit.unit ) (\x -> x)
-              # Bool.iff (Math.random Unit.unit < spawn_rate) (Array.append $ Thing.spawn_shoe Unit.unit ) (\x -> x)
+              # Array.filter_map (Thing.update dt p things)
+              # Bool.iff
+                (Math.random Unit.unit < spawn_rate)
+                (Array.append $ Thing.spawn_box Unit.unit)
+                (\x -> x)
+              # Bool.iff
+                (Math.random Unit.unit < spawn_rate)
+                (Array.append $ Thing.spawn_shoe Unit.unit)
+                (\x -> x)
   , score: score + 1
   , assets
   }
@@ -62,9 +48,6 @@ def draw
   Render.empty
    *> Render.color Render.white
    *> Render.image { x: 0.0, y: 0.0, r: 0.0, s: 10.0 } (Array.index_unsafe assets Asset.tile)
-   *> Render.color (Bool.iff (Circle.hit { p: xx, r: Player.rad } { p: pp, r }) Render.red Render.white)
    *> Player.render p
-   -- *> Render.all (Render.image { x: 100.0, y: 100.0, r: 0.0, s: 1.0 }) assets
-   -- *> Render.circle pp r
    *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
    *> Render.all (Thing.draw assets) things

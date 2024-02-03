@@ -41,6 +41,16 @@ def asset
   with Thing:Full _ -> Asset.box_closed
   end
 
+def is_full
+: Thing -> Bool
+: x
+= match x
+  with Thing:Shoe _ -> false
+  with Thing:Box _ -> false
+  with Thing:Full _ -> true
+  end
+
+
 def is_inside_screen : Thing -> Bool : thing =
     let { x, y } = pos thing
     let margin = rad thing
@@ -52,31 +62,62 @@ def is_inside_screen : Thing -> Bool : thing =
     && ((`margin) <= y) 
     && (y <= height)
 
-def update : Real -> Player -> Thing -> Thing : dt player thing = 
+
+def player_bounce
+: Player -> Vec -> Vec -> Vec
+: player p vel
+=
+  let player_pos = Player.pos player
+  let normal = Vec.sub p player_pos # Vec.normalize
+  in Vec.mul ((Vec.dot normal (Player.vel player)) # Math.max 0.0 # Preamble._add 20.0) normal
+
+def hit_another_thing : Thing -> Thing -> Bool : a b =
+  ((Vec.dist (Thing.pos a) (Thing.pos b)) < Thing.rad b + Thing.rad a)
+  && (0.5 < (Vec.dist (Thing.pos a) (Thing.pos b)))
+
+def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player things thing = 
   let r = rad thing
   let player_pos = Player.pos player
   in
+  match is_inside_screen thing
+  with false -> (Maybe:Nothing)
+  with true -> 
   match thing
-  with Thing:Shoe { pos, vel, img } -> 
-       Thing:Shoe
-         { pos: vel # Vec.mul dt # Vec.add pos
-         , vel: 
-              Bool.iff
-                (Circle.hit { p: player_pos, r: Player.rad } { p: pos, r })
-                (Vec.sub pos player_pos # Vec.normalize)
-                (vel)
-         , img
-         }
-  with Thing:Box { pos, vel } -> 
-       Thing:Box
-         { pos: vel # Vec.mul dt # Vec.add pos
-         , vel: 
-              Bool.iff
-                (Circle.hit { p: player_pos, r: Player.rad } { p: pos, r })
-                (Vec.sub pos player_pos # Vec.normalize)
-                (vel)
-         }
-  with Thing:Full x -> Thing:Full x
+    with Thing:Shoe { pos, vel, img } -> 
+         match Array.find (hit_another_thing thing) things
+          with Maybe:Just _ -> (Maybe:Nothing)
+          with Maybe:Nothing -> 
+             Maybe:Just
+              (Thing:Shoe
+               { pos: vel # Vec.mul dt # Vec.add pos
+               , vel: 
+                    Bool.iff
+                      (Circle.hit { p: player_pos, r: Player.rad } { p: pos, r })
+                      (player_bounce player pos vel)
+                      (vel)
+               , img
+               }
+              )
+          end
+    with Thing:Box { pos, vel } -> 
+       match Array.find (hit_another_thing thing) things
+       with Maybe:Just (Thing:Shoe _) -> Maybe:Just (Thing:Full { pos })
+       with Maybe:Just _ -> (Maybe:Nothing)
+       with Maybe:Nothing -> 
+           Maybe:Just
+           (Thing:Box
+             { pos: vel # Vec.mul dt # Vec.add pos
+             , vel: 
+                  Bool.iff
+                    (Circle.hit { p: player_pos, r: Player.rad } { p: pos, r })
+                    (player_bounce player pos vel)
+                    (vel)
+             }
+            )
+        end
+    with Thing:Full x ->
+       Maybe:Just (Thing:Full x)
+  end
   end
 
 def draw
@@ -92,8 +133,8 @@ def draw
    --  *> Render.color Render.white
 
 
-def min_speed ::= 1.0
-def ran_speed ::= 1.0
+def min_speed ::= 70.0
+def ran_speed ::= 70.0
 
 def random_speed :: _ = Math.random Unit.unit * ran_speed + min_speed
 

@@ -14,6 +14,17 @@ def random_int : Int -> Int -> Int := foreign -[[
 
 def sqrt : Real -> Real := foreign -[[ function(a) return math.sqrt(a) end ]]-
 
+def max
+: Real -> Real -> Real
+: a b
+= Bool.iff (a < b) b a
+
+def min
+: Real -> Real -> Real
+: a b
+= Bool.iff (a < b) a b
+
+
 def sin : Real -> Real := foreign -[[ math.sin ]]-
 def cos : Real -> Real := foreign -[[ math.cos ]]-
 def tan : Real -> Real := foreign -[[ math.tan ]]-

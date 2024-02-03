@@ -2,14 +2,19 @@ mod Maybe
 
 enum Maybe a = Just a | Nothing
 
-def map_maybe
+def is_just
+: Maybe a -> Bool
+: x
+= match x with Maybe:Just a -> true with Maybe:Nothing -> false end
+
+def map
   : (a -> b) -> Maybe a -> Maybe b
   : f m = match m
           with Maybe:Nothing -> (Maybe:Nothing)
           with Maybe:Just x -> Maybe:Just (f x)
           end
 
-def join_maybe
+def join
   : Maybe (Maybe a) -> Maybe a
   : m = match m
           with Maybe:Nothing -> (Maybe:Nothing)
@@ -18,7 +23,7 @@ def join_maybe
 
 def and_then
   : (a -> Maybe b) -> Maybe a -> Maybe b
-  : f m = map_maybe f m # join_maybe
+  : f m = map f m # join
 
 def default
   : a -> Maybe a -> a
