@@ -83,12 +83,16 @@ def map
   end end
 ]]-
 
--- def filter
---   : (a -> Bool) -> Array a -> Array a
---   : f = foldl (\a xs -> match f a 
---                         with true -> append xs a
---                         with false -> xs
---                         end
---               ) empty
+def filter
+  : (a -> Bool) -> Array a -> Array a
+  := foreign -[[
+  function(f) return function(a)
+    local b = Sylt.Array.new({})
+    for _, x in pairs(a) do
+      if f(x) then table.insert(b, x) end
+    end
+    return b
+  end end
+]]-
 
 def flatten : Array (Array a) -> Array a := foldl ' join ' empty

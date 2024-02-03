@@ -13,12 +13,12 @@ def spy : a -> a := foreign -[[
 def init : Int -> State : _ = { x: 2, p: Player.new, balls: [], score: 0, boxes: [] }
 
 def update : Real -> Input -> State -> State : dt input { p, x, balls, score, boxes } =
-  let new_ball = Spawner.outsideScreen Unit.unit 
-  let new_box = Spawner.outsideScreen Unit.unit 
+  let new_ball = Spawner.outside_screen Unit.unit 
+  let new_box = Spawner.outside_screen Unit.unit 
   in
   { p: Player.update dt input p
   , x
-  , balls: balls # Array.map (Ball.update dt) # Array.append new_ball
+  , balls: balls # Array.filter Ball.is_inside_screen # Array.map (Ball.update dt) # Array.append new_ball
   , score: score + 1
   , boxes: boxes # Array.map (Box.update dt) # Array.append new_box }
 

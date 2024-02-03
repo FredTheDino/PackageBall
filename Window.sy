@@ -2,3 +2,6 @@ mod Window
 
 def getHeight : Unit -> Real := foreign -[[ function(unit) return love.graphics.getHeight() end ]]-
 def getWidth : Unit -> Real := foreign -[[ function(unit) return love.graphics.getWidth() end ]]-
+
+def width : Unit -> Real := foreign -[[ function(unit) return love.graphics.getWidth() end ]]-
+def height : Unit -> Real := foreign -[[ function(unit) return love.graphics.getHeight() end ]]-

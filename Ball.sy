@@ -8,3 +8,14 @@ def update : Real -> Ball -> Ball : dt { pos, dir } =
 def draw : Ball -> Render : { pos } = Render.color Render.blue *> Render.circle pos 5.0
 
 def speed : Real := 100.0
+
+def margin : Real := 50.0
+
+def is_inside_screen : Ball -> Bool : { pos: { x, y }, dir: _ } =
+    let height = margin + Window.height Unit.unit
+    let width = margin + Window.width Unit.unit
+    in
+    ((`margin) <= x)
+    && (x <= width)
+    && ((`margin) <= y) 
+    && (y <= height)

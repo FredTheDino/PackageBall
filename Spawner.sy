@@ -1,6 +1,6 @@
 mod Spawner
 
-def outsideScreen : Unit -> Ball : _ =
+def outside_screen : Unit -> Ball : _ =
     let height = Window.getHeight Unit.unit
     let width = Window.getWidth Unit.unit
     let yoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 height
@@ -14,4 +14,6 @@ def outsideScreen : Unit -> Ball : _ =
     let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
     let dir = Vec.normalize (Vec.sub dirt pos)
     in
-    { pos, dir }
+    Bool.iff (Math.random Unit.unit < 0.5)
+        { pos: { x: x, y: yoffset }, dir }
+        { pos: { x: xoffset, y }, dir }
