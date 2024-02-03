@@ -8,7 +8,7 @@ def pure : a -> Render a := foreign -[[
   ]]-
 
 def and_then
-: (a -> Render b) -> Render a -> b
+: (a -> Render b) -> Render a -> Render b
 := foreign -[[
   function(f)
     return function(x)
@@ -19,6 +19,8 @@ def and_then
     end
   end
 ]]-
+
+def bind :: a b = and_then b a
 
 def map
 : (a -> b) -> Render a -> Render b

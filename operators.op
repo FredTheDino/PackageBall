@@ -8,6 +8,7 @@ binr / 3 Preamble._div
 
 binr ' 6 Preamble._call
 binr # 7 Preamble._revCall
+binr >>= 7 Render.bind
 binr $ 8 Preamble._call
 
 binr == 8 Preamble._eq

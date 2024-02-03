@@ -1,0 +1,47 @@
+mod Curry
+
+type F3 = foreign
+
+def fn3 : F3 -> a -> b -> c -> d := foreign -[[
+    function(f3)
+        return function(a)
+            return function(b)
+                return function(c)
+                    return f3(a, b, c)
+                end
+            end
+        end
+    end
+]]-
+
+type F4 = foreign
+
+def fn4 : F4 -> a -> b -> c -> d -> e := foreign -[[
+    function(f4)
+        return function(a)
+            return function(b)
+                return function(c)
+                    return function(d)
+                        return f4(a, b, c, d)
+                    end
+                end
+            end
+        end
+    end
+]]-
+
+def fn4e : F4 -> a -> b -> c -> d -> e := foreign -[[
+    function(f4)
+        return function(a)
+            return function(b)
+                return function(c)
+                    return function(d)
+                        return function()
+                            return f4(a, b, c, d)
+                        end
+                    end
+                end
+            end
+        end
+    end
+]]-
