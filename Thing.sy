@@ -32,6 +32,15 @@ def color
   with Thing:Full _ -> Render.green
   end
 
+def asset
+: Thing -> Int
+: x
+= match x
+  with Thing:Shoe _ -> Asset.shoe1
+  with Thing:Box _ -> Asset.box_open
+  with Thing:Full _ -> Asset.box_closed
+  end
+
 def is_inside_screen : Thing -> Bool : thing =
     let { x, y } = pos thing
     let margin = rad thing
@@ -72,18 +81,14 @@ def update : Real -> Player -> Thing -> Thing : dt player thing =
 def draw
 : Array Image -> Thing -> Render
 : assets thing 
-= match thing
-  with Thing:Box { pos: { x, y }, vel: _ } ->
-     Render.color Render.white
-        *> Render.image { x, y, r: 0.0, s: 0.2 } (Array.index_unsafe assets Asset.box_open)
-  with Thing:Full { pos: { x, y } } ->
-     Render.color Render.white
-        *> Render.image { x, y, r: 0.0, s: 0.2 } (Array.index_unsafe assets Asset.box_closed)
-  with _ ->
-     Render.color (color thing)
-      *> Render.circle (pos thing) (rad thing)
-      *> Render.color Render.white
-  end
+= let
+     { x, y } = pos thing
+   in
+   Render.color Render.white
+      *> Render.image { x, y, r: 0.0, s: 0.2 } (Array.index_unsafe assets (asset thing))
+   -- Render.color (color thing)
+   --  *> Render.circle (pos thing) (rad thing)
+   --  *> Render.color Render.white
 
 def spawn_box
 : Unit -> Thing
