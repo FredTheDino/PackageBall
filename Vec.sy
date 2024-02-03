@@ -31,5 +31,16 @@ def len_sq
 : a = dot a a
 
 def len
-: Vec -> Vec -> Real
+: Vec -> Real
 := len_sq >> Math.sqrt
+
+def normalize
+: Vec -> Vec
+: a
+= let
+    l = len a
+  in
+  Bool.iff (l == 0.0)
+    (vec 0.0 0.0)
+    (a # Vec.mul (1.0 / l))
+

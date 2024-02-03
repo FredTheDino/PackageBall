@@ -1,0 +1,8 @@
+mod Ball
+
+type Ball = { pos : Vec, dir : Vec }
+
+def update : Real -> Ball -> Ball : dt { pos, dir } = 
+ { pos: dir # Vec.mul (dt * speed) # Vec.add pos, dir }
+
+def speed : Real := 100.0
