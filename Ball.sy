@@ -6,6 +6,7 @@ def update : Real -> Ball -> Ball : dt { pos, dir } =
  { pos: dir # Vec.mul (dt * speed) # Vec.add pos, dir }
 
 def draw : Ball -> Render : { pos } = Render.color Render.blue *> Render.circle pos 5.0
+def draw_full : Box -> Render : { pos } = Render.color Render.white *> Render.circle pos 5.0
 
 def speed : Real := 100.0
 

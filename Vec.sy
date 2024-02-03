@@ -43,6 +43,10 @@ def len
 : Vec -> Real
 : v = v # len_sq # Math.sqrt
 
+def dist_sq
+: Vec -> Vec -> Real
+: a b = Main.spy (sub (Main.spy a) (Main.spy b) # len_sq)
+
 def normalize
 : Vec -> Vec
 : a

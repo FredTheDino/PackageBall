@@ -38,9 +38,9 @@ def singleton
   := foreign -[[ function(a) return Sylt.Array.new({a}) end ]]-
 
 def append :  a -> Array a -> Array a
-  : x xs = join ' xs ' (singleton ' x)
+  : x xs = concat ' xs ' (singleton ' x)
 
-def join
+def concat
   : Array a -> Array a -> Array a
   := foreign -[[
   function(a) return function(b)
@@ -95,4 +95,6 @@ def filter
   end end
 ]]-
 
-def flatten : Array (Array a) -> Array a := foldl ' join ' empty
+def flatten : Array (Array a) -> Array a := foldl ' concat ' empty
+
+def any : (a -> Bool) -> Array a -> Bool : f xs = foldl (\x acc -> f x && acc) true xs
