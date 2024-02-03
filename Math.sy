@@ -6,6 +6,12 @@ def random : Unit -> Real := foreign -[[
     end
 ]]-
 
+def random_int : Int -> Int -> Int := foreign -[[
+    function(a) return function(b)
+        return love.math.random(a, b)
+    end end
+]]-
+
 def sqrt : Real -> Real := foreign -[[ function(a) return math.sqrt(a) end ]]-
 
 def sin : Real -> Real := foreign -[[ math.sin ]]-

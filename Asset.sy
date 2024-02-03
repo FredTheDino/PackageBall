@@ -2,10 +2,10 @@ mod Asset
 
 type Image = foreign
 
-def shoe1 ::= 1
-def shoe2 ::= 2
-def shoe3 ::= 3
-def box_open ::= 4
+def shoe1 ::= 0
+def shoe2 ::= 1
+def shoe3 ::= 2
+def box_open ::= 3
 def box_closed ::= 4
 
 def image : Str -> Image := foreign -[[

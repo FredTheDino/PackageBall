@@ -98,3 +98,11 @@ def filter
 def flatten : Array (Array a) -> Array a := foldl ' concat ' empty
 
 def any : (a -> Bool) -> Array a -> Bool : f xs = foldl (\x acc -> f x || acc) false xs
+
+def index_unsafe : Array a -> Int -> a := foreign -[[
+    function(a)
+        return function(i)
+            return a[i+1]
+        end
+    end
+]]-
