@@ -24,6 +24,9 @@ def spawn_rate ::= 0.001
 
 def update : Real -> Input -> State -> State : dt input { p, score, assets, things } =
   let updated_things = things # Array.map (Thing.update dt p things)
+  let should_spawn_box =
+      !(things
+        # Array.any (\t -> match t with Thing:Box {pos: _, vel} -> 0.1 < Vec.len_sq vel with _ -> false end))
   in
   match get_restart input
   with true ->
@@ -33,7 +36,7 @@ def update : Real -> Input -> State -> State : dt input { p, score, assets, thin
     , things: updated_things
                 # Array.filter_map (\x -> x)
                 # Bool.iff
-                  (Math.random Unit.unit < spawn_rate)
+                  should_spawn_box
                   (Array.prepend $ Thing.spawn_box Unit.unit)
                   (\x -> x)
                 # Bool.iff
