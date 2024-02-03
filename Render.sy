@@ -41,6 +41,10 @@ def printf
 
 type Color = { r: Real, g: Real, b: Real, a: Real }
 
+def all : (a -> Render) -> Array a -> Render : f =
+  Array.foldl (\a acc -> and acc (f a)) Render.empty 
+
+
 def color : Color -> Render := foreign -[[
     function(c)
         return function()
@@ -52,8 +56,10 @@ def color : Color -> Render := foreign -[[
 def image
 : { x: Real, y : Real, r: Real, s: Real} -> Image -> Render
 := foreign -[[
-  function(c) function(x)
-    return love.graphics.draw(x, c.x, c.y, c.r, c.s, c.s, x:getWidth() / 2, x:getHeight() / 2)
+  function(c) return function(x)
+    return function()
+      love.graphics.draw(x, c.x, c.y, c.r, c.s, c.s, x:getWidth() / 2, x:getHeight() / 2)
+    end
   end end
 ]]-
 

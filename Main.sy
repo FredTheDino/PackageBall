@@ -1,6 +1,6 @@
 mod Main
 
-type State = { x: Int , p : Player, balls : Array Ball, score : Int, boxes : Array Box }
+type State = { x: Int, p : Player, balls : Array Ball, score : Int, boxes : Array Box, assets: Array Image }
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool }
 
 def spy : a -> a := foreign -[[
@@ -10,7 +10,15 @@ def spy : a -> a := foreign -[[
     end
 ]]-
 
-def init : Int -> State : _ = { x: 2, p: Player.new, balls: [], score: 0, boxes: [] }
+def init : Int -> State : _ =
+  { x: 2
+  , p: Player.new
+  , balls: []
+  , score: 0
+  , boxes: []
+  , assets: [ Asset.image "assets/shoe1.png"
+            ]
+  }
 
 def update : Real -> Input -> State -> State : dt input { p, x, balls, score, boxes } =
   let new_ball = Spawner.outside_screen Unit.unit 
@@ -24,14 +32,15 @@ def update : Real -> Input -> State -> State : dt input { p, x, balls, score, bo
 
 def draw
 : State -> Render
-: { p: p@{ p: xx }, balls, score, boxes } =
+: { p: p@{ p: xx }, balls, score, boxes, assets } =
   let pp = { x: 100.0, y: 200.0 }
   let r = 100.0
   in
   Render.empty
    *> Render.color (Bool.iff (Circle.hit { p: xx, r: Player.radius } { p: pp, r }) Render.red Render.white)
    *> Player.render p
+   -- *> Render.all (Render.image { x: 100.0, y: 100.0, r: 0.0, s: 1.0 }) assets
    *> Render.circle pp r
    *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
-   *> Array.foldl (\ball acc -> acc *> Ball.draw ball) Render.empty balls
-   *> Array.foldl (\box acc -> acc *> Box.draw box) Render.empty boxes
+   *> Render.all (Ball.draw) balls
+   *> Render.all (Box.draw) boxes
