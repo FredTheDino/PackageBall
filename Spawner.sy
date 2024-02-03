@@ -5,7 +5,9 @@ def outsideScreen : Unit -> { x : Real, y : Real } : _ =
     let width = Window.getWidth Unit.unit
     let yoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 height
     let xoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 width
-    let x = Math.random Unit.unit * width
-    let y = Math.random Unit.unit * height
+    let x = Math.random Unit.unit * width + xoffset
+    let y = Math.random Unit.unit * height + yoffset
     in
-    { x, y }
+    Bool.iff (Math.random Unit.unit < 0.5)
+        { x: x, y: yoffset }
+        { x: xoffset, y }
