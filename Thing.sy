@@ -75,3 +75,47 @@ def draw
 = Render.color (color thing)
   *> Render.circle (pos thing) (rad thing)
   *> Render.color Render.white
+
+def spawn_box
+: Unit -> Thing
+: _
+=
+    let height = Render.height Unit.unit
+    let width = Render.width Unit.unit
+    let xoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 width
+    let yoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 height
+    let x = Math.random Unit.unit * width + xoffset
+    let y = Math.random Unit.unit * height + yoffset
+    let pos = 
+        Bool.iff (Math.random Unit.unit < 0.5)
+            { x, y: yoffset }
+            { x: xoffset, y }
+    let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
+    let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (Math.random Unit.unit * 100.0 + 100.0)
+    in
+    Thing:Box (Bool.iff (Math.random Unit.unit < 0.5)
+        { pos: { x: x, y: yoffset }, vel }
+        { pos: { x: xoffset, y }, vel }
+    )
+
+def spawn_shoe
+: Unit -> Thing
+: _
+=
+    let height = Render.height Unit.unit
+    let width = Render.width Unit.unit
+    let xoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 width
+    let yoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 height
+    let x = Math.random Unit.unit * width + xoffset
+    let y = Math.random Unit.unit * height + yoffset
+    let pos = 
+        Bool.iff (Math.random Unit.unit < 0.5)
+            { x, y: yoffset }
+            { x: xoffset, y }
+    let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
+    let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (Math.random Unit.unit * 100.0 + 100.0)
+    in
+    Thing:Shoe ( Bool.iff (Math.random Unit.unit < 0.5)
+        { pos: { x: x, y: yoffset }, vel }
+        { pos: { x: xoffset, y }, vel }
+      )

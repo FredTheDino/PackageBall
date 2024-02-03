@@ -49,7 +49,8 @@ def update : Real -> Input -> State -> State : dt input { p, x, score, assets, t
                       )
               )
               # Array.map (Thing.update dt p)
-              -- # Bool.iff (Math.random Unit.unit < spawn_rate) (Array.append $ Spawner.outside_screen Unit.unit ) (\x -> x)
+              # Bool.iff (Math.random Unit.unit < spawn_rate) (Array.append $ Thing.spawn_box Unit.unit ) (\x -> x)
+              # Bool.iff (Math.random Unit.unit < spawn_rate) (Array.append $ Thing.spawn_shoe Unit.unit ) (\x -> x)
   , score: score + 1
   , assets
   }
