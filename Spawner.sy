@@ -1,6 +1,6 @@
 mod Spawner
 
-def outsideScreen : Unit -> { x : Real, y : Real } : _ =
+def outsideScreen : Unit -> Vec : _ =
     let height = Window.getHeight Unit.unit
     let width = Window.getWidth Unit.unit
     let yoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 height

@@ -1,6 +1,6 @@
 mod Main
 
-type State = { x: Int , p : Player}
+type State = { x: Int , p : Player, balls : Array Vec }
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool }
 
 def spy : a -> a := foreign -[[
@@ -10,21 +10,19 @@ def spy : a -> a := foreign -[[
     end
 ]]-
 
-def init : Int -> State : _ = { x: 2, p: { x:200, y:200 } }
+def init : Int -> State : _ = { x: 2, p: { x:200, y:200 }, balls: [] }
 
-def update : Real -> Input -> State -> State : dt input { p, x } =
+def update : Real -> Input -> State -> State : dt input { p, x, balls } =
+  let newBall = Spawner.outsideScreen Unit.unit 
+  in
   { p: Player.update dt input p
-  , x }
+  , x
+  , balls: Array.append newBall balls }
 
 def draw
-<<<<<<< HEAD
-: State -> Render Unit
-: { p } = let v = Spawner.outsideScreen Unit.unit 
-    in Render.circle p (Math.random Unit.unit * 100.0) >>= (\_ -> Graphics.printf "Hello world" 0.0 0.0 300.0) >>= (\_ -> Render.circle v 50.0)
-=======
 : State -> Render
 : { p } =
-    let {x, y} = Spawner.outsideScreen Unit.unit 
+    let v = Spawner.outsideScreen Unit.unit 
     in Render.circle p (Math.random Unit.unit * 100.0)
-       *> (Render.printf "Hello world" x y 300.0)
->>>>>>> refs/remotes/origin/main
+       *> (Render.printf "Hello world" 0.0 0.0 300.0)
+       *> Render.circle v 5.0
