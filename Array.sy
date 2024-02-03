@@ -73,7 +73,15 @@ def tostring
 
 def map
   : (a -> b) -> Array a -> Array b
-  : f xs = foldl (\a xs-> append (f a) xs) empty xs
+  := foreign -[[
+  function(f) return function(a)
+    local b = Sylt.Array.new({})
+    for _, x in pairs(a) do
+      table.insert(b, f(x))
+    end
+    return b
+  end end
+]]-
 
 -- def filter
 --   : (a -> Bool) -> Array a -> Array a
