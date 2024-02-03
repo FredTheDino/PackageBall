@@ -1,0 +1,77 @@
+mod Thing
+
+enum Thing =
+  Shoe { pos : Vec, vel : Vec }
+  | Box { pos : Vec, vel : Vec }
+  | Full { pos : Vec }
+
+def pos
+: Thing -> Vec
+: x
+= match x
+  with Thing:Shoe { pos, vel: _ } -> pos
+  with Thing:Box { pos, vel: _ } -> pos
+  with Thing:Full { pos } -> pos
+  end
+
+def rad
+: Thing -> Real
+: x
+= match x
+  with Thing:Shoe _ -> 20.0
+  with Thing:Box _ -> 30.0
+  with Thing:Full _ -> 30.0
+  end
+
+def color
+: Thing -> Color
+: x
+= match x
+  with Thing:Shoe _ -> Render.red
+  with Thing:Box _ -> Render.blue
+  with Thing:Full _ -> Render.green
+  end
+
+def is_inside_screen : Thing -> Bool : thing =
+    let { x, y } = pos thing
+    let margin = rad thing
+    let height = margin + Render.height Unit.unit
+    let width = margin + Render.width Unit.unit
+    in
+    ((`margin) <= x)
+    && (x <= width)
+    && ((`margin) <= y) 
+    && (y <= height)
+
+def update : Real -> Player -> Thing -> Thing : dt player thing = 
+  let r = rad thing
+  let player_pos = Player.pos player
+  in
+  match thing
+  with Thing:Shoe { pos, vel } -> 
+       Thing:Shoe
+         { pos: vel # Vec.mul dt # Vec.add pos
+         , vel: 
+              Bool.iff
+                (Circle.hit { p: player_pos, r: Player.rad } { p: pos, r })
+                (Vec.sub pos player_pos # Vec.normalize)
+                (vel)
+         }
+  with Thing:Box { pos, vel } -> 
+       Thing:Box
+         { pos: vel # Vec.mul dt # Vec.add pos
+         , vel: 
+              Bool.iff
+                (Circle.hit { p: player_pos, r: Player.rad } { p: pos, r })
+                (Vec.sub pos player_pos # Vec.normalize)
+                (vel)
+         }
+  with Thing:Full x -> Thing:Full x
+  end
+
+def draw
+: Thing -> Render
+: thing 
+= Render.color (color thing)
+  *> Render.circle (pos thing) (rad thing)
+  *> Render.color Render.white

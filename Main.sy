@@ -1,6 +1,6 @@
 mod Main
 
-type State = { x: Int, p : Player, balls : Array Ball, score : Int, boxes : Array Box, assets: Array Image, full_boxes : Array Ball }
+type State = { x: Int, p : Player, things : Array Thing, score : Int, assets: Array Image }
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool }
 
 def spy : a -> a := foreign -[[
@@ -14,57 +14,50 @@ def init : Int -> State : _ =
   { x: 2
   , p: Player.new
   , score: 0
-  , balls: []
-  , boxes: []
-  , assets: Asset.load_assets Unit.unit
-  , full_boxes: []
+  , things: []
+  , assets: [ Asset.image "assets/shoe1.png" ]
   }
 
 def spawn_rate ::= 0.01
 
-def update : Real -> Input -> State -> State : dt input { p, x, balls, score, boxes, assets, full_boxes } =
-  let full_boxes = full_boxes
+def update : Real -> Input -> State -> State : dt input { p, x, score, assets, things } =
+  let things = things
       # Array.concat
-        (balls
+        (things
           # Array.filter
-            (\{ pos: bpos, dir: _ } ->
-                Array.any
-                  (\{ pos: xpos, dir: _ } -> (Vec.dist xpos bpos) < Box.rad + Ball.rad)
-                  boxes
+            (\b ->
+                let pos = Thing.pos b
+                in
+                Thing.is_inside_screen b
+                && !(Array.any
+                      (\x -> ((Vec.dist (Thing.pos x) pos) < Box.rad + Ball.rad) && (x != b))
+                      things
+                    )
             )
         )
   in
   { p: Player.update dt input p
   , x
-  , balls: balls
-              # Array.filter (\b@{pos, dir: _ } ->
-                  Ball.is_inside_screen b
+  , things: things
+              # Array.filter (\b ->
+                  let pos = Thing.pos b
+                  in
+                  Thing.is_inside_screen b
                   && !(Array.any
-                        (\{ pos: xpos, dir: _ } -> (Vec.dist xpos pos) < Box.rad + Ball.rad)
-                        boxes
+                        (\x -> ((Vec.dist (Thing.pos x) pos) < Box.rad + Ball.rad) && (x != b))
+                        things
                       )
               )
-              # Array.map (Ball.update dt p)
-              # Bool.iff (Math.random Unit.unit < spawn_rate) (Array.append $ Spawner.outside_screen Unit.unit ) (\x -> x)
+              # Array.map (Thing.update dt p)
+              -- # Bool.iff (Math.random Unit.unit < spawn_rate) (Array.append $ Spawner.outside_screen Unit.unit ) (\x -> x)
   , score: score + 1
-  , boxes: boxes
-              # Array.filter (\b@{ pos, dir: _ } -> 
-                  Ball.is_inside_screen b
-                  && !(Array.any
-                        (\{ pos: xpos, dir: _ } -> (Vec.dist xpos pos) < Box.rad + Ball.rad)
-                        balls
-                      )
-                  )
-              # Array.map (Box.update dt p)
-              # Bool.iff (Math.random Unit.unit < spawn_rate) (Array.append $ Spawner.outside_screen Unit.unit ) (\x -> x)
   , assets
-  , full_boxes
   }
 
 
 def draw
 : State -> Render
-: { p: p@{ p: xx }, balls, score, boxes, assets, full_boxes } =
+: { p: p@{ p: xx }, score, assets, things } =
   let pp = { x: 100.0, y: 200.0 }
   let r = 100.0
   in
@@ -74,6 +67,4 @@ def draw
    -- *> Render.all (Render.image { x: 100.0, y: 100.0, r: 0.0, s: 1.0 }) assets
    -- *> Render.circle pp r
    *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
-   *> Render.all (Ball.draw_full) full_boxes
-   *> Render.all (Ball.draw) balls
-   *> Render.all (Box.draw) boxes
+   *> Render.all (Thing.draw) things
