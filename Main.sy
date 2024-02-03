@@ -16,11 +16,10 @@ def init : Int -> State : _ =
   , balls: []
   , score: 0
   , boxes: []
-  , assets: [ Asset.image "assets/shoe1.png"
-            ]
+  , assets: [ Asset.image "assets/shoe1.png" ]
   }
 
-def update : Real -> Input -> State -> State : dt input { p, x, balls, score, boxes } =
+def update : Real -> Input -> State -> State : dt input { p, x, balls, score, boxes, assets } =
   let new_ball = Spawner.outside_screen Unit.unit 
   let new_box = Spawner.outside_screen Unit.unit 
   in
@@ -28,7 +27,10 @@ def update : Real -> Input -> State -> State : dt input { p, x, balls, score, bo
   , x
   , balls: balls # Array.filter Ball.is_inside_screen # Array.map (Ball.update dt) # Array.append new_ball
   , score: score + 1
-  , boxes: boxes # Array.map (Box.update dt) # Array.append new_box }
+  , boxes: boxes # Array.map (Box.update dt) # Array.append new_box
+  , assets
+  }
+
 
 def draw
 : State -> Render
@@ -39,7 +41,7 @@ def draw
   Render.empty
    *> Render.color (Bool.iff (Circle.hit { p: xx, r: Player.radius } { p: pp, r }) Render.red Render.white)
    *> Player.render p
-   -- *> Render.all (Render.image { x: 100.0, y: 100.0, r: 0.0, s: 1.0 }) assets
+   *> Render.all (Render.image { x: 100.0, y: 100.0, r: 0.0, s: 1.0 }) assets
    *> Render.circle pp r
    *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
    *> Render.all (Ball.draw) balls
