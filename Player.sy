@@ -1,11 +1,11 @@
 mod Player
 
-type Player = { p: Vec } 
+type Player = Vec
 
 def input_to_vec : Input -> Vec : { left, right, up, down } =
   Vec.add
-    (Vec.vec (iff left 1.0 0.0) (iff up 1.0 0.0) # Vec.mul (`1.0))
-    (Vec.vec (iff right 1.0 0.0) (iff down 1.0 0.0))
+    (Vec.vec (Bool.iff left 1.0 0.0) (Bool.iff up 1.0 0.0) # Vec.mul (`1.0))
+    (Vec.vec (Bool.iff right 1.0 0.0) (Bool.iff down 1.0 0.0))
 
-def update : Real -> Input -> Player -> Player : dt input { p } = 
+def update : Real -> Input -> Player -> Player : dt input p = 
   input_to_vec input # Vec.mul (dt * 100.0) # Vec.add p
