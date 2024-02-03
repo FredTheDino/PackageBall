@@ -110,10 +110,8 @@ def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player t
   match thing
     with Thing:Shoe { pos, vel, img, angle } -> 
          match Array.find (hit_another_thing thing) things
-          with Maybe:Just (Thing:Box _) -> (Maybe:Nothing)
-          with Maybe:Just t@(Thing:Shoe _) -> Maybe:Just (Thing:Shoe { angle: angle + dt * Vec.len vel, pos, img, vel: vel # bounce t thing # player_bounce player pos r })
-          with Maybe:Just t@(Thing:Full _) -> Maybe:Just (Thing:Shoe { angle: angle + dt * Vec.len vel, pos, img, vel: vel # bounce t thing # player_bounce player pos r })
-          with Maybe:Nothing -> 
+          with Maybe:Just _ -> (Maybe:Nothing)
+          with Maybe:Nothing ->
              Maybe:Just
               (Thing:Shoe
                { pos: vel # Vec.mul dt # Vec.add pos
