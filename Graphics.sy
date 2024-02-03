@@ -1,4 +1,4 @@
-mod LoveGraphics
+mod Graphics
 
 def printf_foreign ::= foreign -[[
     function(a, b, c, d)

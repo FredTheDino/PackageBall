@@ -18,4 +18,4 @@ def update : Real -> Input -> State -> State : dt input state@{ p } =
 
 def draw
 : State -> Render Unit
-: { p } = Render.circle p 100.0 >>= (\_ -> LoveGraphics.printf "Hello world" 0.0 0.0 300.0)
+: { p } = Render.circle p 100.0 >>= (\_ -> Graphics.printf "Hello world" 0.0 0.0 300.0)

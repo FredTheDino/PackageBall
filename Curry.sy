@@ -29,19 +29,3 @@ def fn4 : F4 -> a -> b -> c -> d -> e := foreign -[[
         end
     end
 ]]-
-
-def fn4e : F4 -> a -> b -> c -> d -> e := foreign -[[
-    function(f4)
-        return function(a)
-            return function(b)
-                return function(c)
-                    return function(d)
-                        return function()
-                            return f4(a, b, c, d)
-                        end
-                    end
-                end
-            end
-        end
-    end
-]]-
