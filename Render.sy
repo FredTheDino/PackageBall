@@ -1,33 +1,27 @@
 mod Render
 
-type Render a = foreign
+type Render = foreign
 
 
-def pure : a -> Render a := foreign -[[
+def pure : a -> Render := foreign -[[
     function(x) return function() return x end end
   ]]-
 
-def and_then
-: (a -> Render b) -> Render a -> Render b
+def and
+: Render -> Render -> Render
 := foreign -[[
   function(f)
     return function(x)
       return function()
-        local xx = x()
-        return f(xx)()
+        x()
+        f()
       end
     end
   end
 ]]-
 
-def bind :: a b = and_then b a
-
-def map
-: (a -> b) -> Render a -> Render b
-: f = and_then (\x -> x # f # pure)
-
 def circle
-: Vec -> Real -> Render Unit
+: Vec -> Real -> Render
 := foreign -[[
   function(v) return function(r)
     return function()
@@ -35,7 +29,25 @@ def circle
       return "UNIT"
     end
   end end
-
-
 ]]-
--- TODO: Render code goes here
+
+def printf_foreign ::= foreign -[[
+    function(a, b, c, d)
+        return function()
+            love.graphics.printf(a, b, c, d)
+            return "UNIT"
+        end
+    end
+]]-
+
+def printf
+: Str -> Real -> Real -> Real -> Render
+:= Curry.fn4 printf_foreign
+
+def color ::= foreign -[[
+    function(c)
+        return function()
+          love.graphics.printf(c.r, c.g, c.b, c.a)
+        end
+    end
+]]-
