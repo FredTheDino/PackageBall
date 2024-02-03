@@ -8,7 +8,7 @@ def pos : Player -> Vec : { p, v } = p
 
 def vel : Player -> Vec : { p, v } = v
 
-def new : Player := { p: { x:200.0, y:200.0 }, v: { x: 0.0, y: 0.0 }}
+def new : Player := { p: { x: Render.width Unit.unit / 2.0, y: Render.height Unit.unit / 2.0 }, v: { x: 0.0, y: 0.0 }}
 
 def input_to_vec : Input -> Vec : { left, right, up, down } =
   Vec.add
