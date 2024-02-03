@@ -80,7 +80,7 @@ def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player t
   let player_pos = Player.pos player
   in
   match is_inside_screen thing
-  with false -> let _ = Main.spy "ABC" in (Maybe:Nothing)
+  with false -> (Maybe:Nothing)
   with true -> 
   match thing
     with Thing:Shoe { pos, vel, img } -> 
@@ -134,8 +134,8 @@ def draw
   --  *> Render.color Render.white
 
 
-def min_speed ::= 7.0
-def ran_speed ::= 7.0
+def min_speed ::= 30.0
+def ran_speed ::= 80.0
 
 def random_speed :: _ = Math.random Unit.unit * ran_speed + min_speed
 
@@ -145,21 +145,14 @@ def spawn_box
 =
     let height = Render.height Unit.unit
     let width = Render.width Unit.unit
-    let xoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 width
-    let yoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 height
-    let x = Math.random Unit.unit * width + xoffset
-    let y = Math.random Unit.unit * height + yoffset
     let pos = 
         Bool.iff (Math.random Unit.unit < 0.5)
-            { x, y: yoffset }
-            { x: xoffset, y }
+            { x: Math.random Unit.unit * width, y: Bool.iff (Math.random Unit.unit < 0.5) 0.0 height }
+            { x: Bool.iff (Math.random Unit.unit < 0.5) 0.0 width, y: Math.random Unit.unit * height }
     let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
     let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (random_speed Unit.unit)
     in
-    Thing:Box (Bool.iff (Math.random Unit.unit < 0.5)
-        { pos: { x: x, y: yoffset }, vel }
-        { pos: { x: xoffset, y }, vel }
-    )
+    Thing:Box { pos, vel }
 
 def spawn_shoe
 : Unit -> Thing
@@ -167,19 +160,12 @@ def spawn_shoe
 =
     let height = Render.height Unit.unit
     let width = Render.width Unit.unit
-    let xoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 width
-    let yoffset = Bool.iff (Math.random Unit.unit < 0.5) 0.0 height
-    let x = Math.random Unit.unit * width + xoffset
-    let y = Math.random Unit.unit * height + yoffset
     let pos = 
         Bool.iff (Math.random Unit.unit < 0.5)
-            { x, y: yoffset }
-            { x: xoffset, y }
+            { x: Math.random Unit.unit * width, y: Bool.iff (Math.random Unit.unit < 0.5) 0.0 height }
+            { x: Bool.iff (Math.random Unit.unit < 0.5) 0.0 width, y: Math.random Unit.unit * height }
     let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
     let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (random_speed Unit.unit)
     let img = Math.random_int Asset.shoe1 Asset.shoe3
     in
-    Thing:Shoe ( Bool.iff (Math.random Unit.unit < 0.5)
-        { pos: { x: x, y: yoffset }, vel, img }
-        { pos: { x: xoffset, y }, vel, img }
-      )
+    Thing:Shoe { pos, vel, img }
