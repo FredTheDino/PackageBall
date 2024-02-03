@@ -1,0 +1,10 @@
+mod Box
+
+type Box = { pos : Vec, dir : Vec }
+
+def update : Real -> Box -> Box : dt { pos, dir } = 
+ { pos: dir # Vec.mul (dt * speed) # Vec.add pos, dir }
+
+def draw : Box -> Render : { pos } = Render.color Render.green *> Render.circle pos 5.0
+
+def speed : Real := 100.0

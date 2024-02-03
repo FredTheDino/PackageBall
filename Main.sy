@@ -1,6 +1,6 @@
 mod Main
 
-type State = { x: Int , p : Player, balls : Array Ball, score : Int }
+type State = { x: Int , p : Player, balls : Array Ball, score : Int, boxes : Array Box }
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool }
 
 def spy : a -> a := foreign -[[
@@ -10,19 +10,21 @@ def spy : a -> a := foreign -[[
     end
 ]]-
 
-def init : Int -> State : _ = { x: 2, p: Player.new, balls: [] , score: 0 }
+def init : Int -> State : _ = { x: 2, p: Player.new, balls: [], score: 0, boxes: [] }
 
-def update : Real -> Input -> State -> State : dt input { p, x, balls, score } =
-  let newBall = Spawner.outsideScreen Unit.unit 
+def update : Real -> Input -> State -> State : dt input { p, x, balls, score, boxes } =
+  let new_ball = Spawner.outsideScreen Unit.unit 
+  let new_box = Spawner.outsideScreen Unit.unit 
   in
   { p: Player.update dt input p
   , x
-  , balls: balls # Array.map (Ball.update dt) # Array.append newBall
-  , score: score + 1 }
+  , balls: balls # Array.map (Ball.update dt) # Array.append new_ball
+  , score: score + 1
+  , boxes: boxes # Array.map (Box.update dt) # Array.append new_box }
 
 def draw
 : State -> Render
-: { p: p@{ p: xx }, balls, score } =
+: { p: p@{ p: xx }, balls, score, boxes } =
   let pp = { x: 100.0, y: 200.0 }
   let r = 100.0
   in
@@ -32,3 +34,4 @@ def draw
    *> Render.circle pp r
    *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
    *> Array.foldl (\ball acc -> acc *> Ball.draw ball) Render.empty balls
+   *> Array.foldl (\box acc -> acc *> Box.draw box) Render.empty boxes
