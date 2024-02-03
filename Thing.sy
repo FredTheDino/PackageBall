@@ -1,7 +1,7 @@
 mod Thing
 
 enum Thing =
-  Shoe { pos : Vec, vel : Vec }
+  Shoe { pos : Vec, vel : Vec, img : Int }
   | Box { pos : Vec, vel : Vec }
   | Full { pos : Vec }
 
@@ -9,7 +9,7 @@ def pos
 : Thing -> Vec
 : x
 = match x
-  with Thing:Shoe { pos, vel: _ } -> pos
+  with Thing:Shoe { pos, vel: _, img: _ } -> pos
   with Thing:Box { pos, vel: _ } -> pos
   with Thing:Full { pos } -> pos
   end
@@ -36,7 +36,7 @@ def asset
 : Thing -> Int
 : x
 = match x
-  with Thing:Shoe _ -> Asset.shoe1
+  with Thing:Shoe { pos: _, vel: _, img } -> img
   with Thing:Box _ -> Asset.box_open
   with Thing:Full _ -> Asset.box_closed
   end
@@ -57,7 +57,7 @@ def update : Real -> Player -> Thing -> Thing : dt player thing =
   let player_pos = Player.pos player
   in
   match thing
-  with Thing:Shoe { pos, vel } -> 
+  with Thing:Shoe { pos, vel, img } -> 
        Thing:Shoe
          { pos: vel # Vec.mul dt # Vec.add pos
          , vel: 
@@ -65,6 +65,7 @@ def update : Real -> Player -> Thing -> Thing : dt player thing =
                 (Circle.hit { p: player_pos, r: Player.rad } { p: pos, r })
                 (Vec.sub pos player_pos # Vec.normalize)
                 (vel)
+         , img
          }
   with Thing:Box { pos, vel } -> 
        Thing:Box
@@ -134,8 +135,9 @@ def spawn_shoe
             { x: xoffset, y }
     let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
     let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (random_speed Unit.unit)
+    let img = Math.random_int Asset.shoe1 Asset.shoe3
     in
     Thing:Shoe ( Bool.iff (Math.random Unit.unit < 0.5)
-        { pos: { x: x, y: yoffset }, vel }
-        { pos: { x: xoffset, y }, vel }
+        { pos: { x: x, y: yoffset }, vel, img }
+        { pos: { x: xoffset, y }, vel, img }
       )
