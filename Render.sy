@@ -53,3 +53,6 @@ def white : Color := { r: 1.0, g: 1.0, b: 1.0, a: 1.0 }
 def red : Color := { r: 1.0, g: 0.0, b: 0.0, a: 1.0 }
 def green : Color := { r: 0.0, g: 1.0, b: 0.0, a: 1.0 }
 def blue : Color := { r: 0.0, g: 0.0, b: 1.0, a: 1.0 }
+
+def width : Unit -> Real := foreign -[[ function(unit) return love.graphics.getWidth() end ]]-
+def height : Unit -> Real := foreign -[[ function(unit) return love.graphics.getHeight() end ]]-
