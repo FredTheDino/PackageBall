@@ -191,7 +191,7 @@ def too_close
 
 def spawn_box
 : Array Thing -> Thing
-: _things
+: things
 =
     let height = Render.height Unit.unit
     let width = Render.width Unit.unit
@@ -202,11 +202,14 @@ def spawn_box
     let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
     let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (random_speed Unit.unit)
     in
-    Thing:Box { pos, vel }
+    (Bool.iff (too_close things pos)
+      (\_ -> spawn_box things)
+      (\_ -> Thing:Box { pos, vel })
+    ) Unit.unit
 
 def spawn_shoe
 : Array Thing -> Thing
-: _things
+: things
 =
     let height = Render.height Unit.unit
     let width = Render.width Unit.unit
@@ -218,4 +221,8 @@ def spawn_shoe
     let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (random_speed Unit.unit)
     let img = Math.random_int Asset.shoe1 Asset.shoe3
     in
-    Thing:Shoe { pos, vel, img, angle: 0.0 }
+    (Bool.iff (too_close things pos)
+      (\_ -> spawn_box things)
+      (\_ -> Thing:Shoe { pos, vel, img, angle: 0.0 })
+    ) Unit.unit
+    

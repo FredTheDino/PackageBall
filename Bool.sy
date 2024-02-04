@@ -3,7 +3,8 @@ mod Bool
 def iff : Bool -> a -> a -> a : b t f =
   match b with true -> t with false -> f end
 
-def when : Bool -> (a -> a) -> (a -> a): b f = iff b f (\x -> x)
+def when : Bool -> (Unit -> a -> a) -> a -> a: b f a =
+  match b with true -> f Unit.unit a with false -> a end
 
 def to_real : Bool -> Real : x =
   match x with true -> 1.0 with false -> 0.0 end
