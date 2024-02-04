@@ -159,8 +159,7 @@ def update : Real -> Player -> Bool -> Array Thing -> Thing -> Maybe Thing : dt 
              { pos: vel
                     # Vec.mul dt
                     # Vec.add pos
-                    
-             , vel: vel # player_bounce player pos r # bounce_inside r pos
+             , vel: vel # player_bounce hit player pos r # bounce_inside r pos
              }
            )
         end
