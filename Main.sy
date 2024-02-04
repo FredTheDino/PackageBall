@@ -45,10 +45,10 @@ def update : Real -> Input -> State -> State : dt input state@{ shoe_spawn, p, s
                 # Array.filter_map (\x -> x)
                 # Bool.when
                   should_spawn_box
-                  (Array.prepend $ Thing.spawn_box Unit.unit)
+                  (Array.prepend $ Thing.spawn_box things)
                 # Bool.when
                   (shoe_spawn < 0.0)
-                  (Array.prepend $ Thing.spawn_shoe Unit.unit)
+                  (Array.prepend $ Thing.spawn_shoe things)
     , score: Array.range 0 (Array.size things - 1)
                 # Array.foldl (\i acc ->
                     match { a: Array.index_unsafe things i, b: Array.index_unsafe updated_things i }

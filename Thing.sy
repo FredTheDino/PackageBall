@@ -184,9 +184,14 @@ def ran_speed ::= 80.0
 
 def random_speed :: _ = Math.random Unit.unit * ran_speed + min_speed
 
+def too_close
+: Array Thing -> Vec -> Bool 
+: things p
+= Array.any (\thing -> (thing # pos # Vec.dist_sq p) < (Math.sq 25.0))
+
 def spawn_box
-: Unit -> Thing
-: _
+: Array Thing -> Thing
+: things
 =
     let height = Render.height Unit.unit
     let width = Render.width Unit.unit
@@ -197,11 +202,13 @@ def spawn_box
     let dirt = { x: Math.random Unit.unit * width, y: Math.random Unit.unit * height }
     let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (random_speed Unit.unit)
     in
-    Thing:Box { pos, vel }
+    Bool.iff (too_close things pos)
+      (spawn_box things)
+      (Thing:Box { pos, vel })
 
 def spawn_shoe
-: Unit -> Thing
-: _
+: Array Thing -> Thing
+: things
 =
     let height = Render.height Unit.unit
     let width = Render.width Unit.unit
@@ -213,4 +220,6 @@ def spawn_shoe
     let vel = Vec.normalize (Vec.sub dirt pos) # Vec.mul (random_speed Unit.unit)
     let img = Math.random_int Asset.shoe1 Asset.shoe3
     in
-    Thing:Shoe { pos, vel, img, angle: 0.0 }
+    Bool.iff (too_close things pos)
+      (spawn_shoe things)
+      (Thing:Shoe { pos, vel, img, angle: 0.0 })
