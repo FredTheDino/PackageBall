@@ -63,7 +63,7 @@ def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_sp
     init 0 
   with { r: _, e: true } ->
     Love.quit 0 (State:Game state)
-  with _ if ^c < (boxes_to_spawn + 2.0) ->
+  with _ if ^c < (boxes_to_spawn + 8.0) ->
     State:Game
     { p: p # Player.update dt input # Player.box_collide things
     , things: updated_things
