@@ -77,7 +77,7 @@ def draw
   Render.empty
    *> Render.color Render.white
    *> background assets
-   *> Player.render p
+   *> Player.render assets p
    *> Render.all (Thing.draw assets) things
    *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
 

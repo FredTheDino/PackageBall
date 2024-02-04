@@ -8,6 +8,7 @@ def shoe3 ::= 2
 def box_open ::= 3
 def box_closed ::= 4
 def tile ::= 5
+def player ::= 6
 
 def image : Str -> Image := foreign -[[
   function(x)
@@ -22,4 +23,5 @@ def load_assets : Unit -> Array Image : _ =
     , Asset.image "assets/box_open.png"
     , Asset.image "assets/box_closed.png"
     , Asset.image "assets/tile.png"
+    , Asset.image "assets/player.png"
     ]

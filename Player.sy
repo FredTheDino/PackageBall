@@ -58,9 +58,11 @@ def clamp_inside
   }
 
 def render
-: Player -> Render
-: { p } = 
-      Render.empty
-      *> Render.circle p rad
-      *> Render.color Render.white
+: Array Image -> Player -> Render
+: assets { p: { x, y } } = 
+  let img = Array.index_unsafe assets Asset.player
+  let s = 2.0 * rad / Image.width img
+  -- let r = 0.1 * angle thing
+  in
+  Render.color Render.white *> Render.image { x, y, r: 0.0, s } img
 
