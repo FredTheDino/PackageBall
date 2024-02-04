@@ -3,3 +3,5 @@ mod F
 def on
 : (b -> b -> c) -> (a -> b) -> a -> a -> c
 : g f x y = g (f x) (f y)
+
+def with_unit : (Unit -> a) -> a : f = f Unit.unit

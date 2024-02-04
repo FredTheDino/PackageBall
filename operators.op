@@ -1,6 +1,7 @@
 unary ` Preamble._neg
 unary ! Preamble._not
 unary ^ Math.int_to_real
+unary ~ F.with_unit
 
 binr ++ 4 Preamble.concat 
 binr + 4 Preamble._add 

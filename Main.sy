@@ -3,7 +3,7 @@ mod Main
 enum State
     = Game GameState
     | Menu Unit
-type GameState = { shoe_spawn: Real, p : Player, things : Array Thing, score : Int, assets: Array Image }
+type GameState = { shoe_spawn: Real, p : Player, things : Array Thing, score : Int, score_inc: Real, assets: Array Image }
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool, hit: Bool, restart: Bool, exit: Bool }
 
 def get_restart : Input -> Bool : { restart } = restart
@@ -33,14 +33,15 @@ def update : Real -> Input -> State -> State : dt input state =
               , shoe_spawn: 0.0
               , score: 0
               , things: []
-              , assets: Asset.load_assets Unit.unit
+              , score_inc: 0.0
+              , assets: ~Asset.load_assets
               }
         with false ->
             State:Menu Unit.unit
         end
     end
 
-def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_spawn, p, score, assets, things } =
+def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_spawn, p, score, assets, things, score_inc } =
   let updated_things = things # Array.map (Thing.update dt p (get_hit input) things)
   let boxes_to_spawn = 1.0 + (score / 500)
   let should_spawn_box =
@@ -48,6 +49,13 @@ def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_sp
         # Array.count_if (\t -> match t with Thing:Box {pos: _, vel} -> 0.1 < Vec.len_sq vel with _ -> false end)
         # (\x -> ^x < boxes_to_spawn)
   let c = Array.count_if Thing.is_box things
+  let new_score = Array.range 0 (Array.size things - 1)
+                # Array.foldl (\i acc ->
+                    match { a: Array.index_unsafe things i, b: Array.index_unsafe updated_things i }
+                    with { a: Thing:Box _, b: Maybe:Just (Thing:Full _) } -> acc + 100
+                    with _ -> acc
+                    end
+                ) score
   in
   match { r: get_restart input, e: get_exit input } 
   with { r: true, e: _ } ->
@@ -65,22 +73,17 @@ def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_sp
                 # Bool.when
                   (shoe_spawn < 0.0)
                   (\_ -> Array.prepend $ Thing.spawn_shoe things)
-    , score: Array.range 0 (Array.size things - 1)
-                # Array.foldl (\i acc ->
-                    match { a: Array.index_unsafe things i, b: Array.index_unsafe updated_things i }
-                    with { a: Thing:Box _, b: Maybe:Just (Thing:Full _) } -> acc + 100
-                    with _ -> acc
-                    end
-                ) score
+    , score: new_score
     , shoe_spawn:
           Bool.iff
             (shoe_spawn < 0.0)
-            (3.0 * Math.random Unit.unit)
+            (3.0 * ~Math.random)
             (shoe_spawn - dt)
     , assets
+    , score_inc
     }
   with _ ->
-    State:Game { p, score, assets, things, shoe_spawn }
+    State:Game { p, score, assets, things, shoe_spawn, score_inc }
   end
 
 def draw
@@ -93,7 +96,7 @@ def draw
 
 def draw_game
 : GameState -> Render
-: { p, score, assets, things } =
+: { p, score, score_inc, assets, things } =
   let pp = { x: 100.0, y: 200.0 }
   let r = 100.0
   in
@@ -111,8 +114,8 @@ def draw_menu ::=
 def background : Array Image -> Render : assets =
   let img = Array.index_unsafe assets Asset.tile
   let size = Image.width img
-  let needed_x = Real.floor (Render.width Unit.unit / size)
-  let needed_y = Real.floor (Render.height Unit.unit / size)
+  let needed_x = Real.floor (~Render.width / size)
+  let needed_y = Real.floor (~Render.height / size)
   in
   Array.range 0 needed_x
     # Render.all (\x ->
@@ -121,3 +124,5 @@ def background : Array Image -> Render : assets =
             Render.image { x: size * x + size / 2, y: size * y + size / 2, r: 0.0, s: 1.0 } img
         )
     )
+
+def render
