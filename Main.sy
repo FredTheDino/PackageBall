@@ -1,6 +1,7 @@
 mod Main
 
-type State = { shoe_spawn: Real, p : Player, things : Array Thing, score : Int, assets: Array Image }
+enum State = Game GameState
+type GameState = { shoe_spawn: Real, p : Player, things : Array Thing, score : Int, assets: Array Image }
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool, hit: Bool, restart: Bool, exit: Bool }
 
 def get_restart : Input -> Bool : { restart } = restart
@@ -15,6 +16,7 @@ def spy : a -> a := foreign -[[
 ]]-
 
 def init : Int -> State : _ =
+  State:Game
   { p: Player.new
   , shoe_spawn: 0.0
   , score: 0
@@ -24,8 +26,12 @@ def init : Int -> State : _ =
 
 def spawn_rate ::= 0.01
 
+def update : Real -> Input -> State -> State : dt input state =
+    match state
+    with State:Game game_state -> update_game dt input game_state
+    end
 
-def update : Real -> Input -> State -> State : dt input state@{ shoe_spawn, p, score, assets, things } =
+def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_spawn, p, score, assets, things } =
   let updated_things = things # Array.map (Thing.update dt p (get_hit input) things)
   let boxes_to_spawn = 1.0 + (score / 500)
   let should_spawn_box =
@@ -38,8 +44,9 @@ def update : Real -> Input -> State -> State : dt input state@{ shoe_spawn, p, s
   with { r: true, e: _ } ->
     init 0 
   with { r: _, e: true } ->
-    Love.quit 0 state
+    Love.quit 0 (State:Game state)
   with _ if ^c < (boxes_to_spawn + 2.0) ->
+    State:Game
     { p: p # Player.update dt input # Player.box_collide things
     , things: updated_things
                 # Array.filter_map (\x -> x)
@@ -64,12 +71,18 @@ def update : Real -> Input -> State -> State : dt input state@{ shoe_spawn, p, s
     , assets
     }
   with _ ->
-    { p, score, assets, things, shoe_spawn }
+    State:Game { p, score, assets, things, shoe_spawn }
   end
-
 
 def draw
 : State -> Render
+: state =
+    match state
+    with State:Game game_state -> draw_game game_state
+    end
+
+def draw_game
+: GameState -> Render
 : { p, score, assets, things } =
   let pp = { x: 100.0, y: 200.0 }
   let r = 100.0
