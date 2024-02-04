@@ -26,9 +26,11 @@ def spawn_rate ::= 0.01
 
 def update : Real -> Input -> State -> State : dt input state@{ shoe_spawn, p, score, assets, things } =
   let updated_things = things # Array.map (Thing.update dt p things)
+  let boxes_to_spawn = 1.0 + (score / 500)
   let should_spawn_box =
-      !(things
-        # Array.any (\t -> match t with Thing:Box {pos: _, vel} -> 0.1 < Vec.len_sq vel with _ -> false end))
+      things
+        # Array.count_if (\t -> match t with Thing:Box {pos: _, vel} -> 0.1 < Vec.len_sq vel with _ -> false end)
+        # (\x -> ^x < boxes_to_spawn)
   let c = Array.count_if Thing.is_box things
   in
   match { r: get_restart input, e: get_exit input } 
@@ -36,7 +38,7 @@ def update : Real -> Input -> State -> State : dt input state@{ shoe_spawn, p, s
     init 0 
   with { r: _, e: true } ->
     Love.quit 0 state
-  with _ if c < 5 ->
+  with _ if ^c < (boxes_to_spawn + 2.0) ->
     { p: p # Player.update dt input # Player.box_collide things
     , things: updated_things
                 # Array.filter_map (\x -> x)

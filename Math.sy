@@ -6,6 +6,8 @@ def random : Unit -> Real := foreign -[[
     end
 ]]-
 
+def int_to_real : Int -> Real := foreign -[[ function (a) return a end ]]-
+
 def random_int : Int -> Int -> Int := foreign -[[
     function(a) return function(b)
         return love.math.random(a, b)
