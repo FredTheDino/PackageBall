@@ -59,6 +59,11 @@ def is_full
   with Thing:Full _ -> true
   end
 
+def is_box
+: Thing -> Bool
+: x
+= match x with Thing:Box _ -> true with _ -> false end
+
 
 def is_inside_screen : Thing -> Bool : thing =
     let { x, y } = pos thing
@@ -99,6 +104,27 @@ def bounce
       (Vec.vec 0.0 0.0)
       (vel)
 
+def bounce_inside
+: Real -> Vec -> Vec -> Vec
+: margin { x, y } { x: vx, y: vy } =
+  let hix = (Render.width Unit.unit - margin)
+  let hiy = (Render.height Unit.unit - margin)
+  let lox = margin
+  let loy = margin
+  in
+  { x: vx * (Bool.iff
+          (((lox < x) && (vx < 0.0))
+          || ((0.0 < vx) && (x < hix)))
+          1.0
+          (`0.4)
+        )
+  , y: vy * (Bool.iff
+          (((loy < y) && (vy < 0.0))
+          || ((0.0 < vy) && (y < hiy)))
+          1.0
+          (`0.4)
+        )
+  }
 
 def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player things thing = 
   let r = rad thing
@@ -130,10 +156,13 @@ def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player t
        with Maybe:Nothing -> 
            Maybe:Just
            (Thing:Box
-             { pos: vel # Vec.mul dt # Vec.add pos
-             , vel: player_bounce player pos r vel
+             { pos: vel
+                    # Vec.mul dt
+                    # Vec.add pos
+                    
+             , vel: vel # player_bounce player pos r # bounce_inside r pos
              }
-            )
+           )
         end
     with Thing:Full x ->
        Maybe:Just (Thing:Full x)

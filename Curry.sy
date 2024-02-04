@@ -4,7 +4,7 @@ def compose
 : (a -> b) -> (b -> c) -> (a -> c)
 : f g a = g (f a)
 
-def compose_flip :: f g = compose g f
+def compose_flip : (b -> c) -> (a -> b) -> (a -> c) : f g = compose g f
 
 type F3 = foreign
 

@@ -1,6 +1,6 @@
 mod Main
 
-type State = { p : Player, things : Array Thing, score : Int, assets: Array Image }
+type State = { shoe_spawn: Real, p : Player, things : Array Thing, score : Int, assets: Array Image }
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool, restart: Bool, exit: Bool }
 
 def get_restart : Input -> Bool : { restart } = restart
@@ -15,6 +15,7 @@ def spy : a -> a := foreign -[[
 
 def init : Int -> State : _ =
   { p: Player.new
+  , shoe_spawn: 0.0
   , score: 0
   , things: []
   , assets: Asset.load_assets Unit.unit
@@ -23,31 +24,28 @@ def init : Int -> State : _ =
 def spawn_rate ::= 0.01
 
 
-def update : Real -> Input -> State -> State : dt input state@{ p, score, assets, things } =
+def update : Real -> Input -> State -> State : dt input state@{ shoe_spawn, p, score, assets, things } =
   let updated_things = things # Array.map (Thing.update dt p things)
   let should_spawn_box =
       !(things
         # Array.any (\t -> match t with Thing:Box {pos: _, vel} -> 0.1 < Vec.len_sq vel with _ -> false end))
+  let c = Array.count_if Thing.is_box things
   in
   match { r: get_restart input, e: get_exit input } 
   with { r: true, e: _ } ->
     init 0 
   with { r: _, e: true } ->
     Love.quit 0 state
-  with _ ->
-    { p: Player.update dt input p
-  with false ->
+  with _ if c < 5 ->
     { p: p # Player.update dt input # Player.box_collide things
     , things: updated_things
                 # Array.filter_map (\x -> x)
-                # Bool.iff
+                # Bool.when
                   should_spawn_box
                   (Array.prepend $ Thing.spawn_box Unit.unit)
-                  (\x -> x)
-                # Bool.iff
-                  (Math.random Unit.unit < spawn_rate)
+                # Bool.when
+                  (shoe_spawn < 0.0)
                   (Array.prepend $ Thing.spawn_shoe Unit.unit)
-                  (\x -> x)
     , score: Array.range 0 (Array.size things - 1)
                 # Array.foldl (\i acc ->
                     match { a: Array.index_unsafe things i, b: Array.index_unsafe updated_things i }
@@ -55,8 +53,15 @@ def update : Real -> Input -> State -> State : dt input state@{ p, score, assets
                     with _ -> acc
                     end
                 ) score
+    , shoe_spawn:
+          Bool.iff
+            (shoe_spawn < 0.0)
+            (3.0 * Math.random Unit.unit)
+            (shoe_spawn - dt)
     , assets
     }
+  with _ ->
+    { p, score, assets, things, shoe_spawn }
   end
 
 

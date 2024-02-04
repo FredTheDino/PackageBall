@@ -124,6 +124,9 @@ def find
   end end
 ]]-
 
+def count_if
+  : (a -> Bool) -> Array a -> Int
+  : f xs = xs # map (\x -> x # f # Bool.to_int) # foldl Preamble._add 0
 
 def flatten : Array (Array a) -> Array a := foldl ' concat ' empty
 
