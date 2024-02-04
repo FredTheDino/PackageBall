@@ -70,7 +70,7 @@ def update : Real -> Input -> State -> State : dt input state@{ shoe_spawn, p, s
 
 def draw
 : State -> Render
-: { p: p@{ p: xx }, score, assets, things } =
+: { p, score, assets, things } =
   let pp = { x: 100.0, y: 200.0 }
   let r = 100.0
   in

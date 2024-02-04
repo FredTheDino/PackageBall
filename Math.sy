@@ -33,6 +33,7 @@ def clamp
 def sin : Real -> Real := foreign -[[ math.sin ]]-
 def cos : Real -> Real := foreign -[[ math.cos ]]-
 def tan : Real -> Real := foreign -[[ math.tan ]]-
+def atan : Real -> Real -> Real := foreign -[[ function(y) return function(x) return math.atan2(y, x) end end ]]-
 def pow : Real -> Real -> Real := foreign -[[ function(x) return function(y) return x ^ y end end ]]-
 def pi : Real := foreign -[[ math.pi ]]-
 def tau : Real := foreign -[[ math.pi * 2 ]]-
