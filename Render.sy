@@ -42,7 +42,7 @@ def printf
 def printf_ : Str -> Vec -> Str -> { r: Real, s: Real } -> Render := foreign -[[
 function(str) return function(p) return function(align) return function(x)
   return function()
-    love.graphics.printf(str, p.x, p.y, 100, align, x.r, x.s)
+    love.graphics.printf(str, p.x, p.y, 200, align, x.r, x.s)
   end
 end end end end
 ]]-
