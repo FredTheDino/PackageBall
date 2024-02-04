@@ -39,6 +39,14 @@ def printf
 : Str -> Real -> Real -> Real -> Render
 := Curry.fn4 printf_foreign
 
+def printf_ : Str -> Vec -> Str -> { r: Real, s: Real } -> Render := foreign -[[
+function(str) return function(p) return function(align) return function(x)
+  return function()
+    love.graphics.printf(str, p.x, p.y, 100, align, x.r, x.s)
+  end
+end end end end
+]]-
+
 type Color = { r: Real, g: Real, b: Real, a: Real }
 
 def all : (a -> Render) -> Array a -> Render : f =
@@ -67,6 +75,7 @@ def white : Color := { r: 1.0, g: 1.0, b: 1.0, a: 1.0 }
 def red : Color := { r: 1.0, g: 0.0, b: 0.0, a: 1.0 }
 def green : Color := { r: 0.0, g: 1.0, b: 0.0, a: 1.0 }
 def blue : Color := { r: 0.0, g: 0.0, b: 1.0, a: 1.0 }
+def black : Color := { r: 0.0, g: 0.0, b: 0.0, a: 1.0 }
 
 def width : Unit -> Real := foreign -[[ function(unit) return love.graphics.getWidth() end ]]-
 def height : Unit -> Real := foreign -[[ function(unit) return love.graphics.getHeight() end ]]-

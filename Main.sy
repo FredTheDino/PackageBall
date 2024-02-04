@@ -80,7 +80,7 @@ def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_sp
             (3.0 * ~Math.random)
             (shoe_spawn - dt)
     , assets
-    , score_inc
+    , score_inc: Bool.iff (score < new_score) (score_inc + 0.3) (Math.max (score_inc - dt) 0.0)
     }
   with _ ->
     State:Game { p, score, assets, things, shoe_spawn, score_inc }
@@ -105,7 +105,7 @@ def draw_game
    *> background assets
    *> Player.render assets p
    *> Render.all (Thing.draw assets) things
-   *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
+   *> show_score score score_inc
 
 def draw_menu ::=
     Render.printf "Best Boye" 0.0 0.0 300.0
@@ -125,4 +125,17 @@ def background : Array Image -> Render : assets =
         )
     )
 
-def render
+def show_score
+: Int -> Real -> Render
+: score inc
+=
+  let rx = Math.sq (~Math.random) * inc * 30.0
+  let ry = Math.sq (~Math.random) * inc * 30.0
+  in
+  Render.color Render.black
+  *> Render.printf_
+    ("Score: " ++ Int.to_string score)
+    (Vec.vec (40.0 + rx) (50.0 + ry)) 
+    "center"
+    { r: 0.0, s: 1.0 + (inc * inc) * 2.0 }
+
