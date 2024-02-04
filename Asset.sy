@@ -9,6 +9,7 @@ def box_open ::= 3
 def box_closed ::= 4
 def tile ::= 5
 def player ::= 6
+def particle ::= 7
 
 def image : Str -> Image := foreign -[[
   function(x)
@@ -24,6 +25,7 @@ def load_assets : Unit -> Array Image : _ =
     , Asset.image "assets/box_closed.png"
     , Asset.image "assets/tile.png"
     , Asset.image "assets/player.png"
+    , Asset.image "assets/particle.png"
     ]
 
 def small_font ::= 0

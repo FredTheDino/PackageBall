@@ -28,13 +28,15 @@ def update : Real -> Input -> State -> State : dt input state =
     with State:Menu menu_state ->
         match get_hit input
         with true ->
+            let assets = ~Asset.load_assets
+            in
             State:Game
-              { p: Player.new
+              { p: Player.new (Particle.dog_particle_system (Array.index_unsafe assets Asset.particle))
               , shoe_spawn: 0.0
               , score: 0
               , things: []
               , score_inc: 0.0
-              , assets: ~Asset.load_assets
+              , assets
               , fonts: ~Asset.load_fonts
               }
         with false ->

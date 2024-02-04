@@ -77,7 +77,17 @@ def image
   end end
 ]]-
 
+def particle : { x: Real, y : Real, r: Real, s: Real} -> ParticleSystem -> Render
+:= foreign -[[
+  function(c) return function(x)
+    return function()
+      love.graphics.draw(x, c.x, c.y, c.r, c.s, c.s)
+    end
+  end end
+]]-
+
 def white : Color := { r: 1.0, g: 1.0, b: 1.0, a: 1.0 }
+def whitet : Color := { r: 1.0, g: 1.0, b: 1.0, a: 0.0 }
 def red : Color := { r: 1.0, g: 0.0, b: 0.0, a: 1.0 }
 def green : Color := { r: 0.0, g: 1.0, b: 0.0, a: 1.0 }
 def blue : Color := { r: 0.0, g: 0.0, b: 1.0, a: 1.0 }
@@ -85,3 +95,5 @@ def black : Color := { r: 0.0, g: 0.0, b: 0.0, a: 1.0 }
 
 def width : Unit -> Real := foreign -[[ function(unit) return love.graphics.getWidth() end ]]-
 def height : Unit -> Real := foreign -[[ function(unit) return love.graphics.getHeight() end ]]-
+
+def color_to_lua : Color -> Array Real : {r,g,b,a} = [r,g,b,a]

@@ -1,6 +1,6 @@
 mod Player
 
-type Player = { p: Vec, v: Vec, cd: Real }
+type Player = { p: Vec, v: Vec, cd: Real, bark: ParticleSystem }
 
 def rad : Real := 35.0
 
@@ -8,14 +8,14 @@ def pos : Player -> Vec : { p, v } = p
 
 def vel : Player -> Vec : { p, v } = v
 
-def new : Player := { p: { x: Render.width Unit.unit / 2.0, y: Render.height Unit.unit / 2.0 }, v: { x: 0.0, y: 0.0 }, cd: 0.0 }
+def new : ParticleSystem -> Player : bark = { p: { x: Render.width Unit.unit / 2.0, y: Render.height Unit.unit / 2.0 }, v: { x: 0.0, y: 0.0 }, cd: 0.0, bark }
 
 def input_to_vec : Input -> Vec : { left, right, up, down } =
   Vec.add
     (Vec.vec (Bool.iff left 1.0 0.0) (Bool.iff up 1.0 0.0) # Vec.mul (`1.0))
     (Vec.vec (Bool.iff right 1.0 0.0) (Bool.iff down 1.0 0.0))
 
-def update : Real -> Input -> Player -> Player : dt input { p, v, cd } = 
+def update : Real -> Input -> Player -> Player : dt input { p, v, cd, bark } = 
   { p: v
         # Vec.mul dt
         # Vec.add p
@@ -24,18 +24,19 @@ def update : Real -> Input -> Player -> Player : dt input { p, v, cd } =
         # Vec.add v
         # Vec.clamp 1000.0
         # Vec.mul (Math.pow 0.01 dt)
-  , cd: Bool.iff (Main.get_hit input) (0.2) (Math.max 0.0 $ cd - dt)
+  , cd: Bool.iff ((cd < 0.14) && Main.get_hit input) (0.2) (Math.max 0.0 $ cd - dt)
+  , bark: bark # Particle.update dt # Bool.when (0.15 < cd) (\_ -> Particle.emit 10)
   }
   # clamp_inside
 
 def box_collide
 : Array Thing -> Player -> Player
 : things player =
-  Array.foldl (\thing { p, v, cd } -> 
+  Array.foldl (\thing { p, v, cd, bark } -> 
             match thing
             with Thing:Full { pos } if Circle.hit { p, r: Player.rad } { p: pos, r: Thing.rad thing } -> 
-              { p, v: Vec.add v (let n = Vec.sub p pos in n), cd }
-            with _ -> { p, v, cd }
+              { p, v: Vec.add v (let n = Vec.sub p pos in n), cd, bark }
+            with _ -> { p, v, cd, bark }
             end
         ) player things
 
@@ -43,7 +44,7 @@ def margin ::= rad * 1.5
 
 def clamp_inside
   : Player -> Player
-  : { p: { x, y }, v: { x: vx, y: vy }, cd } = 
+  : { p: { x, y }, v: { x: vx, y: vy }, cd, bark } = 
   let hix = (Render.width Unit.unit - margin)
   let hiy = (Render.height Unit.unit - margin)
   let lox = margin
@@ -57,14 +58,17 @@ def clamp_inside
                                || ((0.0 < vy) && (y < hiy)))
        }
   , cd
+  , bark
   }
 
 def render
 : Array Image -> Player -> Render
-: assets { p: { x, y }, v: { x: vx, y: vy}, cd } = 
+: assets { p: { x, y }, v: { x: vx, y: vy}, cd, bark } = 
   let img = Array.index_unsafe assets Asset.player
   let s = 2.0 * rad / Image.width img
   let r = (Math.atan vy vx) - (Math.pi / 2.0)
   in
-  Render.color Render.white *> Render.image { x, y, r, s: s + (cd * cd) } img 
+  Render.color Render.white
+    *> Render.particle { x, y, r: 0.0, s: 1.0 } bark
+    *> Render.image { x, y, r, s: s + (cd * cd) } img 
 

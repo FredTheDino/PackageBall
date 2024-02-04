@@ -2,9 +2,18 @@ mod Particle
 
 type ParticleSystem = foreign
 
+def dog_particle_system : Image -> ParticleSystem : img =
+    new_system img
+        # set_lifetime 0.1 0.3
+        # set_emission_rate 0.0
+        # set_colors [ Render.white, Render.whitet ]
+        # set_spread Math.tau
+        # set_speed 500.0 700.0
+
+
 def new_system : Image -> ParticleSystem := foreign -[[
     function(img)
-        love.graphics.newParticleSystem( img, 1000 )
+        return love.graphics.newParticleSystem( img, 1000 )
     end
 ]]-
 
@@ -22,7 +31,10 @@ def set_emission_rate : Real -> ParticleSystem -> ParticleSystem := foreign -[[
     end end
 ]]-
 
-def set_colors : Array Color -> ParticleSystem -> ParticleSystem := foreign -[[
+def set_colors : Array Color -> ParticleSystem -> ParticleSystem : colors ps = 
+    set_colors_ (colors # Array.map Render.color_to_lua) ps
+
+def set_colors_ : Array (Array Real) -> ParticleSystem -> ParticleSystem := foreign -[[
     function(colors) return function(ps)
         ps:setColors(unpack(colors))
         return ps
@@ -31,7 +43,7 @@ def set_colors : Array Color -> ParticleSystem -> ParticleSystem := foreign -[[
 
 def set_linear_acceleration : Vec -> Vec -> ParticleSystem -> ParticleSystem := foreign -[[
     function(lo) return function(hi) return function(ps)
-        ps:setParticleLifetime(lo.x, lo.y, hi.x, hi.y)
+        ps:setLinearAcceleration(lo.x, lo.y, hi.x, hi.y)
         return ps
     end end end
 ]]-
@@ -46,6 +58,20 @@ def emit : Int -> ParticleSystem -> ParticleSystem := foreign -[[
 def update : Real -> ParticleSystem -> ParticleSystem := foreign -[[
     function(dt) return function(ps)
         ps:update(dt)
+        return ps
+    end end
+]]-
+
+def set_speed : Real -> Real -> ParticleSystem -> ParticleSystem := foreign -[[
+    function(lo) return function(hi) return function(ps)
+        ps:setSpeed(lo, hi)
+        return ps
+    end end end
+]]-
+
+def set_spread : Real -> ParticleSystem -> ParticleSystem := foreign -[[
+    function(spread) return function(ps)
+        ps:setSpread(spread)
         return ps
     end end
 ]]-
