@@ -1,6 +1,8 @@
 mod Main
 
-enum State = Game GameState
+enum State
+    = Game GameState
+    | Menu Unit
 type GameState = { shoe_spawn: Real, p : Player, things : Array Thing, score : Int, assets: Array Image }
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool, hit: Bool, restart: Bool, exit: Bool }
 
@@ -16,19 +18,26 @@ def spy : a -> a := foreign -[[
 ]]-
 
 def init : Int -> State : _ =
-  State:Game
-  { p: Player.new
-  , shoe_spawn: 0.0
-  , score: 0
-  , things: []
-  , assets: Asset.load_assets Unit.unit
-  }
+  State:Menu Unit.unit
 
 def spawn_rate ::= 0.01
 
 def update : Real -> Input -> State -> State : dt input state =
     match state
     with State:Game game_state -> update_game dt input game_state
+    with State:Menu _ ->
+        match get_hit input
+        with true ->
+            State:Game
+              { p: Player.new
+              , shoe_spawn: 0.0
+              , score: 0
+              , things: []
+              , assets: Asset.load_assets Unit.unit
+              }
+        with false ->
+            State:Menu Unit.unit
+        end
     end
 
 def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_spawn, p, score, assets, things } =
@@ -79,6 +88,7 @@ def draw
 : state =
     match state
     with State:Game game_state -> draw_game game_state
+    with State:Menu _ -> draw_menu
     end
 
 def draw_game
@@ -93,6 +103,10 @@ def draw_game
    *> Player.render assets p
    *> Render.all (Thing.draw assets) things
    *> Render.printf ("Score: " ++ Int.to_string score) 0.0 0.0 300.0
+
+def draw_menu ::=
+    Render.printf "Best Boye" 0.0 0.0 300.0
+      *> Render.printf "Press Space to start" 0.0 15.0 300.0
 
 def background : Array Image -> Render : assets =
   let img = Array.index_unsafe assets Asset.tile
