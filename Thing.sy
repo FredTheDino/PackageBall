@@ -78,13 +78,13 @@ def is_inside_screen : Thing -> Bool : thing =
 
 
 def player_bounce
-: Player -> Vec -> Real -> Vec -> Vec
-: player p r vel
+: Bool -> Player -> Vec -> Real -> Vec -> Vec
+: hit player p r vel
 =
   let player_pos = Player.pos player
   in
   Bool.iff
-    (Circle.hit { p: player_pos, r: Player.rad } { p, r })
+    (hit && Circle.hit { p: player_pos, r: Player.rad } { p, r })
       (let normal = Vec.sub p player_pos # Vec.normalize
        in Vec.mul (((Vec.dot normal (Player.vel player)) # Math.max 0.0 # Preamble._add 20.0) + 100.0 + Vec.len vel) normal
       )
@@ -126,7 +126,7 @@ def bounce_inside
         )
   }
 
-def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player things thing = 
+def update : Real -> Player -> Bool -> Array Thing -> Thing -> Maybe Thing : dt player hit things thing = 
   let r = rad thing
   let player_pos = Player.pos player
   in
@@ -141,7 +141,7 @@ def update : Real -> Player -> Array Thing -> Thing -> Maybe Thing : dt player t
              Maybe:Just
               (Thing:Shoe
                { pos: vel # Vec.mul dt # Vec.add pos
-               , vel: player_bounce player pos r vel
+               , vel: player_bounce hit player pos r vel
                , img
                , angle: angle + dt * Vec.len vel
                }

@@ -1,10 +1,11 @@
 mod Main
 
 type State = { shoe_spawn: Real, p : Player, things : Array Thing, score : Int, assets: Array Image }
-type Input = { left: Bool, right: Bool, up: Bool, down: Bool, restart: Bool, exit: Bool }
+type Input = { left: Bool, right: Bool, up: Bool, down: Bool, hit: Bool, restart: Bool, exit: Bool }
 
 def get_restart : Input -> Bool : { restart } = restart
 def get_exit : Input -> Bool : { exit } = exit
+def get_hit : Input -> Bool : { hit } = hit
 
 def spy : a -> a := foreign -[[
     function(x)
@@ -25,7 +26,7 @@ def spawn_rate ::= 0.01
 
 
 def update : Real -> Input -> State -> State : dt input state@{ shoe_spawn, p, score, assets, things } =
-  let updated_things = things # Array.map (Thing.update dt p things)
+  let updated_things = things # Array.map (Thing.update dt p (get_hit input) things)
   let boxes_to_spawn = 1.0 + (score / 500)
   let should_spawn_box =
       things

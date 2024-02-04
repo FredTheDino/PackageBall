@@ -16,6 +16,7 @@ function love.update(dt)
 		down = love.keyboard.isDown("down") or love.keyboard.isDown("s"),
 		restart = love.keyboard.isDown("r"),
 		exit = love.keyboard.isDown("escape") or love.keyboard.isDown("q"),
+		hit = love.keyboard.isDown("space") or love.keyboard.isDown("e"),
 	}
 	state = game.update(dt)(input)(state)
 end
