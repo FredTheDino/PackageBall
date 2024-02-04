@@ -10,6 +10,24 @@ def dog_particle_system : Image -> ParticleSystem : img =
         # set_spread Math.tau
         # set_speed 500.0 700.0
 
+def box_particle_system : Image -> ParticleSystem : img =
+    new_system img
+        # set_lifetime 0.1 0.2
+        # set_emission_rate 0.0
+        # set_colors [ Render.black, Render.whitet ]
+        # set_spread Math.tau
+        # set_speed 500.0 700.0
+
+def score_particles : Image -> ParticleSystem : img =
+  let s = `1000.0
+  in
+    new_system img
+        # set_lifetime 1.0 2.0
+        # set_emission_rate 0.0
+        # set_colors [ Render.white, Render.whitet ]
+        # set_spread Math.pi
+        # set_speed 200.0 50.0
+        # set_linear_acceleration (Vec.vec s 0.0) (Vec.vec s 0.0 )
 
 def new_system : Image -> ParticleSystem := foreign -[[
     function(img)
@@ -69,9 +87,24 @@ def set_speed : Real -> Real -> ParticleSystem -> ParticleSystem := foreign -[[
     end end end
 ]]-
 
+def set_position : Vec -> ParticleSystem -> ParticleSystem := foreign -[[
+    function(v) return function(ps) 
+        ps:setPosition(v.x, v.y)
+        return ps
+    end end
+]]-
+
+
 def set_spread : Real -> ParticleSystem -> ParticleSystem := foreign -[[
     function(spread) return function(ps)
         ps:setSpread(spread)
+        return ps
+    end end
+]]-
+
+def set_rotation : Real -> ParticleSystem -> ParticleSystem := foreign -[[
+    function(rot) return function(ps)
+        ps:setRotation(rot)
         return ps
     end end
 ]]-

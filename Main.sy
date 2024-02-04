@@ -3,7 +3,17 @@ mod Main
 enum State
     = Game GameState
     | Menu { fonts: Array Font }
-type GameState = { shoe_spawn: Real, p : Player, things : Array Thing, score : Int, score_inc: Real, assets: Array Image, fonts: Array Font}
+type GameState =
+  { shoe_spawn: Real
+  , p : Player
+  , things : Array Thing
+  , score : Int
+  , score_inc: Real
+  , assets: Array Image
+  , fonts: Array Font
+  , box_p: ParticleSystem
+  , score_p: ParticleSystem
+  }
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool, hit: Bool, restart: Bool, exit: Bool }
 
 def get_restart : Input -> Bool : { restart } = restart
@@ -38,13 +48,15 @@ def update : Real -> Input -> State -> State : dt input state =
               , score_inc: 0.0
               , assets
               , fonts: ~Asset.load_fonts
+              , box_p: Particle.box_particle_system (Array.index_unsafe assets Asset.particle)
+              , score_p: Particle.score_particles (Array.index_unsafe assets Asset.particle)
               }
         with false ->
             State:Menu menu_state
         end
     end
 
-def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_spawn, p, score, assets, things, score_inc, fonts } =
+def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_spawn, p, score, assets, things, score_inc, fonts, box_p, score_p } =
   let updated_things = things # Array.map (Thing.update dt p (get_hit input) things)
   let boxes_to_spawn = 1.0 + (score / 500)
   let should_spawn_box =
@@ -55,7 +67,9 @@ def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_sp
   let new_score = Array.range 0 (Array.size things - 1)
                 # Array.foldl (\i acc ->
                     match { a: Array.index_unsafe things i, b: Array.index_unsafe updated_things i }
-                    with { a: Thing:Box _, b: Maybe:Just (Thing:Full _) } -> acc + 100
+                    with { a: t@Thing:Box _, b: Maybe:Just (Thing:Full _) } ->
+                      let _ = box_p # Particle.set_position (Thing.pos t) # Particle.emit 20
+                      in acc + 100
                     with _ -> acc
                     end
                 ) score
@@ -85,9 +99,11 @@ def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_sp
     , assets
     , score_inc: Bool.iff (score < new_score) (score_inc + 0.3) (Math.max (score_inc - dt) 0.0)
     , fonts
+    , box_p: box_p # Particle.update dt
+    , score_p: score_p # Particle.update dt
     }
   with _ ->
-    State:Game { p, score, assets, things, shoe_spawn, score_inc, fonts }
+    State:Game { p, score, assets, things, shoe_spawn, score_inc, fonts, box_p, score_p }
   end
 
 def draw
@@ -100,7 +116,7 @@ def draw
 
 def draw_game
 : GameState -> Render
-: { p, score, score_inc, assets, things, fonts } =
+: { p, score, score_inc, assets, things, fonts, box_p, score_p } =
   let pp = { x: 100.0, y: 200.0 }
   let r = 100.0
   in
@@ -108,9 +124,10 @@ def draw_game
    *> Render.set_font (Array.index_unsafe fonts Asset.small_font)
    *> Render.color Render.white
    *> background assets
+   *> Render.particle { x: 0.0, y: 0.0, r: 0.0, s: 1.0 } box_p
    *> Player.render assets p
    *> Render.all (Thing.draw assets) things
-   *> show_score score score_inc
+   *> show_score score_p score score_inc
 
 def draw_menu : Array Font -> Render : fonts =
     let font = Array.index_unsafe fonts Asset.big_font
@@ -138,13 +155,15 @@ def background : Array Image -> Render : assets =
     )
 
 def show_score
-: Int -> Real -> Render
-: score inc
+: ParticleSystem -> Int -> Real -> Render
+: score_p score inc
 =
   let rx = Math.sq (~Math.random) * inc * 30.0
   let ry = Math.sq (~Math.random) * inc * 30.0
+  let _ = Bool.when (0.2 < inc) (\_ ps-> Particle.emit 1 ps) score_p
   in
-  Render.color Render.black
+  Render.particle { x: 110.0, y: `10.0, r: `Math.pi / 2.0, s: 1.0 } score_p
+  *> Render.color Render.black
   *> Render.printf_
     ("Score: " ++ Int.to_string score)
     (Vec.vec (75.0 + rx) (50.0 + ry)) 
