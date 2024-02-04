@@ -3,6 +3,8 @@ mod Main
 enum State
     = Game GameState
     | Menu { fonts: Array Font }
+    | End { fonts: Array Font, score: Int }
+
 type GameState =
   { shoe_spawn: Real
   , p : Player
@@ -52,7 +54,14 @@ def update : Real -> Input -> State -> State : dt input state =
               , score_p: Particle.score_particles (Array.index_unsafe assets Asset.particle)
               }
         with false ->
-            State:Menu menu_state
+            state
+        end
+    with State:End { fonts, score } ->
+        match get_restart input
+        with true ->
+            State:Menu { fonts }
+        with false ->
+            state
         end
     end
 
@@ -103,7 +112,7 @@ def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_sp
     , score_p: score_p # Particle.update dt
     }
   with _ ->
-    State:Game { p, score, assets, things, shoe_spawn, score_inc, fonts, box_p, score_p }
+    State:End { fonts, score }
   end
 
 def draw
@@ -112,6 +121,7 @@ def draw
     match state
     with State:Game game_state -> draw_game game_state
     with State:Menu { fonts } -> draw_menu fonts
+    with State:End end_state -> draw_end end_state
     end
 
 def draw_game
@@ -139,6 +149,20 @@ def draw_menu : Array Font -> Render : fonts =
       *> Render.set_font font
       *> Render.printf "Best Boye" (~Render.width / 2.0 - boye_width / 2.0) (~Render.height / 2.0 - font_height) boye_width
       *> Render.printf "Press Space to start" (~Render.width / 2.0 - press_width / 2.0) (~Render.height / 2.0) press_width
+
+def draw_end : { fonts: Array Font, score: Int } -> Render : { fonts, score } =
+    let font = Array.index_unsafe fonts Asset.big_font
+    let font_height = font # Font.height
+    let boye_width = font # Font.width "Best Boye is defeat!"
+    let press_width = font # Font.width "Press r to restart"
+    let score_str = "Score: " ++ Int.to_string score
+    let score_width = font # Font.width score_str
+    in
+    Render.color Render.white
+      *> Render.set_font font
+      *> Render.printf "Best Boye is defeat!" (~Render.width / 2.0 - boye_width / 2.0) (~Render.height / 2.0 - font_height * 1.5) boye_width
+      *> Render.printf score_str (~Render.width / 2.0 - score_width / 2.0) (~Render.height / 2.0 - font_height * 0.5) score_width
+      *> Render.printf "Press r to restart" (~Render.width / 2.0 - press_width / 2.0) (~Render.height / 2.0 + font_height * 0.5) press_width
 
 def background : Array Image -> Render : assets =
   let img = Array.index_unsafe assets Asset.tile
