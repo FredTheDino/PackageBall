@@ -111,9 +111,15 @@ def draw_game
    *> show_score score score_inc
 
 def draw_menu : Array Font -> Render : fonts =
-    Render.set_font (Array.index_unsafe fonts Asset.big_font)
-      *> Render.printf "Best Boye" 0.0 0.0 300.0
-      *> Render.printf "Press Space to start" 0.0 15.0 300.0
+    let font = Array.index_unsafe fonts Asset.big_font
+    let font_height = font # Font.height
+    let boye_width = font # Font.width "Best Boye"
+    let press_width = font # Font.width "Press Space to start"
+    in
+    Render.color Render.white
+      *> Render.set_font font
+      *> Render.printf "Best Boye" (~Render.width / 2.0 - boye_width / 2.0) (~Render.height / 2.0 - font_height) boye_width
+      *> Render.printf "Press Space to start" (~Render.width / 2.0 - press_width / 2.0) (~Render.height / 2.0) press_width
 
 def background : Array Image -> Render : assets =
   let img = Array.index_unsafe assets Asset.tile

@@ -13,3 +13,9 @@ def width : Str -> Font -> Real := foreign -[[
         return font:getWidth(s)
     end end
 ]]-
+
+def height : Font -> Real := foreign -[[
+    function(font)
+        return font:getHeight()
+    end
+]]-
