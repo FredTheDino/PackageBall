@@ -2,8 +2,8 @@ mod Main
 
 enum State
     = Game GameState
-    | Menu Unit
-type GameState = { shoe_spawn: Real, p : Player, things : Array Thing, score : Int, score_inc: Real, assets: Array Image }
+    | Menu { fonts: Array Font }
+type GameState = { shoe_spawn: Real, p : Player, things : Array Thing, score : Int, score_inc: Real, assets: Array Image, fonts: Array Font}
 type Input = { left: Bool, right: Bool, up: Bool, down: Bool, hit: Bool, restart: Bool, exit: Bool }
 
 def get_restart : Input -> Bool : { restart } = restart
@@ -18,14 +18,14 @@ def spy : a -> a := foreign -[[
 ]]-
 
 def init : Int -> State : _ =
-  State:Menu Unit.unit
+  State:Menu { fonts: ~Asset.load_fonts }
 
 def spawn_rate ::= 0.01
 
 def update : Real -> Input -> State -> State : dt input state =
     match state
     with State:Game game_state -> update_game dt input game_state
-    with State:Menu _ ->
+    with State:Menu menu_state ->
         match get_hit input
         with true ->
             State:Game
@@ -35,13 +35,14 @@ def update : Real -> Input -> State -> State : dt input state =
               , things: []
               , score_inc: 0.0
               , assets: ~Asset.load_assets
+              , fonts: ~Asset.load_fonts
               }
         with false ->
-            State:Menu Unit.unit
+            State:Menu menu_state
         end
     end
 
-def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_spawn, p, score, assets, things, score_inc } =
+def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_spawn, p, score, assets, things, score_inc, fonts } =
   let updated_things = things # Array.map (Thing.update dt p (get_hit input) things)
   let boxes_to_spawn = 1.0 + (score / 500)
   let should_spawn_box =
@@ -81,9 +82,10 @@ def update_game : Real -> Input -> GameState -> State : dt input state@{ shoe_sp
             (shoe_spawn - dt)
     , assets
     , score_inc: Bool.iff (score < new_score) (score_inc + 0.3) (Math.max (score_inc - dt) 0.0)
+    , fonts
     }
   with _ ->
-    State:Game { p, score, assets, things, shoe_spawn, score_inc }
+    State:Game { p, score, assets, things, shoe_spawn, score_inc, fonts }
   end
 
 def draw
@@ -91,24 +93,26 @@ def draw
 : state =
     match state
     with State:Game game_state -> draw_game game_state
-    with State:Menu _ -> draw_menu
+    with State:Menu { fonts } -> draw_menu fonts
     end
 
 def draw_game
 : GameState -> Render
-: { p, score, score_inc, assets, things } =
+: { p, score, score_inc, assets, things, fonts } =
   let pp = { x: 100.0, y: 200.0 }
   let r = 100.0
   in
   Render.empty
+   *> Render.set_font (Array.index_unsafe fonts Asset.small_font)
    *> Render.color Render.white
    *> background assets
    *> Player.render assets p
    *> Render.all (Thing.draw assets) things
    *> show_score score score_inc
 
-def draw_menu ::=
-    Render.printf "Best Boye" 0.0 0.0 300.0
+def draw_menu : Array Font -> Render : fonts =
+    Render.set_font (Array.index_unsafe fonts Asset.big_font)
+      *> Render.printf "Best Boye" 0.0 0.0 300.0
       *> Render.printf "Press Space to start" 0.0 15.0 300.0
 
 def background : Array Image -> Render : assets =

@@ -47,6 +47,12 @@ function(str) return function(p) return function(align) return function(x)
 end end end end
 ]]-
 
+def set_font : Font -> Render := foreign -[[
+    function(font) return function()
+        love.graphics.setFont(font)
+    end end
+]]-
+
 type Color = { r: Real, g: Real, b: Real, a: Real }
 
 def all : (a -> Render) -> Array a -> Render : f =

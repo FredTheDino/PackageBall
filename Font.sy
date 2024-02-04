@@ -1,0 +1,15 @@
+mod Font
+
+type Font = foreign
+
+def new : Str -> Int -> Font := foreign -[[
+    function(file_name) return function(size)
+        return love.graphics.newFont(file_name, size)
+    end end
+]]-
+
+def width : Str -> Font -> Real := foreign -[[
+    function(s) return function(font)
+        return font:getWidth(s)
+    end end
+]]-

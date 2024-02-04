@@ -25,3 +25,11 @@ def load_assets : Unit -> Array Image : _ =
     , Asset.image "assets/tile.png"
     , Asset.image "assets/player.png"
     ]
+
+def small_font ::= 0
+def big_font ::= 1
+
+def load_fonts : Unit -> Array Font : _ =
+    [ Font.new "assets/TitilliumWeb-Regular.ttf" 20
+    , Font.new "assets/TitilliumWeb-Regular.ttf" 64
+    ]
