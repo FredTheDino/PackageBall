@@ -1,0 +1,51 @@
+mod Particle
+
+type ParticleSystem = foreign
+
+def new_system : Image -> ParticleSystem := foreign -[[
+    function(img)
+        love.graphics.newParticleSystem( img, 1000 )
+    end
+]]-
+
+def set_lifetime : Real -> Real -> ParticleSystem -> ParticleSystem := foreign -[[
+    function(lo) return function(hi) return function(ps)
+        ps:setParticleLifetime(lo, hi)
+        return ps
+    end end end
+]]-
+
+def set_emission_rate : Real -> ParticleSystem -> ParticleSystem := foreign -[[
+    function(r) return function(ps)
+        ps:setEmissionRate(r)
+        return ps
+    end end
+]]-
+
+def set_colors : Array Color -> ParticleSystem -> ParticleSystem := foreign -[[
+    function(colors) return function(ps)
+        ps:setColors(unpack(colors))
+        return ps
+    end end
+]]-
+
+def set_linear_acceleration : Vec -> Vec -> ParticleSystem -> ParticleSystem := foreign -[[
+    function(lo) return function(hi) return function(ps)
+        ps:setParticleLifetime(lo.x, lo.y, hi.x, hi.y)
+        return ps
+    end end end
+]]-
+
+def emit : Int -> ParticleSystem -> ParticleSystem := foreign -[[
+    function(amount) return function(ps)
+        ps:emit(amount)
+        return ps
+    end end
+]]-
+
+def update : Real -> ParticleSystem -> ParticleSystem := foreign -[[
+    function(dt) return function(ps)
+        ps:update(dt)
+        return ps
+    end end
+]]-
