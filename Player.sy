@@ -27,6 +27,17 @@ def update : Real -> Input -> Player -> Player : dt input { p, v } =
   }
   # clamp_inside
 
+def box_collide
+: Array Thing -> Player -> Player
+: things player =
+  Array.foldl (\thing { p, v } -> 
+            match thing
+            with Thing:Full { pos } if Circle.hit { p, r: Player.rad } { p: pos, r: Thing.rad thing } -> 
+              { p, v: Vec.add v (let n = Vec.sub p pos in n) }
+            with _ -> { p, v }
+            end
+        ) player things
+
 def margin ::= rad * 1.5
 
 def clamp_inside

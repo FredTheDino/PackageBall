@@ -20,7 +20,7 @@ def init : Int -> State : _ =
   , assets: Asset.load_assets Unit.unit
   }
 
-def spawn_rate ::= 0.001
+def spawn_rate ::= 0.01
 
 
 def update : Real -> Input -> State -> State : dt input state@{ p, score, assets, things } =
@@ -36,6 +36,8 @@ def update : Real -> Input -> State -> State : dt input state@{ p, score, assets
     Love.quit 0 state
   with _ ->
     { p: Player.update dt input p
+  with false ->
+    { p: p # Player.update dt input # Player.box_collide things
     , things: updated_things
                 # Array.filter_map (\x -> x)
                 # Bool.iff
