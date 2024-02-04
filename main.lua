@@ -6,6 +6,8 @@ function love.load()
 	state = game.init(0)
 end
 
+local hit_last = false
+
 function love.update(dt)
 	package.loaded["game"] = nil
 	game = require("game")
@@ -16,9 +18,10 @@ function love.update(dt)
 		down = love.keyboard.isDown("down") or love.keyboard.isDown("s"),
 		restart = love.keyboard.isDown("r"),
 		exit = love.keyboard.isDown("escape") or love.keyboard.isDown("q"),
-		hit = love.keyboard.isDown("space") or love.keyboard.isDown("e"),
+		hit = (love.keyboard.isDown("space") or love.keyboard.isDown("e")) and (not hit_last),
 	}
 	state = game.update(dt)(input)(state)
+  hit_last = love.keyboard.isDown("space") or love.keyboard.isDown("e")
 end
 
 function love.draw()
